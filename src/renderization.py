@@ -124,6 +124,14 @@ def render_entry(entry, section_definition):
         return rendered_entry
 
 
+def render_raw(raw_str, section_definition):
+    # Check if the section has a raw field
+    if section_definition['children'] != 'raw':
+        raise KeyError(f"Incompatible children type found.")
+    # Render the raw field
+    return raw_str
+
+
 def render_section(section, section_definition):
     """
     Renders a section based on its definition.

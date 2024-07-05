@@ -110,7 +110,7 @@ Source: "src/main.js"; DestDir: "{app}"; Flags: ignoreversion
 The tool reads the input file and validates it against the schema. If the input file is valid, it renders the iss file. The schema is used to validate the input file and to provide hints to the user. The schema is also a yaml file, so you can modify it to add missing keys or entries without having to modify the tool. The attributes and structure of the schema are pretty much self-explanatory, but here is a brief explanation of the keys:
 
 - `renderedName`: The name of the key in the rendered iss file.
-- `children`: The type of the key. It can be `keys` or `entries`. `keys` are used to define a dictionary, while `entries` are used to define a list of dictionaries (which follow the same schema that is defined in the `entry` key).
+- `children`: The type of the key. It can be `keys`, `entries` or `raw`. `keys` are used to define a dictionary, while `entries` are used to define a list of dictionaries (which follow the same schema that is defined in the `entry` key). `raw` is just a raw string that is rendered as is, useful for directives that don't follow the key-value structure (such as `[Code]`).
 
 ## Roadmap
 - [] More InnoSetup directives in the base schema.

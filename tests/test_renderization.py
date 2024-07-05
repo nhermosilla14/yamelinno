@@ -1,6 +1,7 @@
 import unittest
 
-from src.renderization import render, render_entry, render_section, render_key
+from src.renderization import \
+    render, render_entry, render_section, render_key, render_raw
 
 class RenderKeyTestCase(unittest.TestCase):
     def test_render_key(self):
@@ -82,6 +83,18 @@ class RenderEntryTestCase(unittest.TestCase):
         }
         with self.assertRaises(Exception):
             render_entry(entry, section_definition)
+
+class RenderRawTestCase(unittest.TestCase):
+    def test_render_raw(self):
+        section_definition = {
+                'renderedName': 'Code',
+                'required': False,
+                'children': 'raw',
+            }
+        raw_code = 'A multi-line\nvalue\n'
+        expected_output = 'A multi-line\nvalue\n'
+        rendered_raw = render_raw(raw_code, section_definition)
+        self.assertEqual(rendered_raw, expected_output)
 
 
 class RenderSectionTestCase(unittest.TestCase):
@@ -165,7 +178,7 @@ class RenderSectionTestCase(unittest.TestCase):
             }
         ]
         section_definition = {
-            'rendered_name': 'SectionName',
+            'renderedName': 'SectionName',
             'children': 'entries',
             'entry': {
                 'keyName': {
