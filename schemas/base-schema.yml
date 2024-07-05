@@ -1,0 +1,35 @@
+setup:
+    renderedName: Setup
+    children: keys
+    required: true      
+    keys:
+      appId:
+        renderedName: AppId
+        required: true
+      appName:
+        renderedName: AppName
+        required: true
+      appVersion:
+        renderedName: AppVersion
+        required: true
+      defaultDirName:
+        renderedName: DefaultDirName
+        required: false
+      defaultDirPath:
+        renderedName: DefaultDirPath
+        required: false
+  
+files:
+    renderedName: Files
+    children: entries
+    # Entry structure
+    entry:
+      source:
+        renderedName: Source
+        required: true
+      destDir:
+        renderedName: DestDir  
+        required: true
+      flags:
+        renderedName: Flags
+        required: false
