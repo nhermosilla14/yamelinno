@@ -33,3 +33,8 @@ files:
       flags:
         renderedName: Flags
         required: false
+
+code:
+    renderedName: Code
+    children: raw
+    required: true
