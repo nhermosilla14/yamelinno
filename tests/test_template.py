@@ -22,7 +22,6 @@ class TestTemplates(unittest.TestCase):
         }
         actual_config = load_config(config_file)
         # Clean up
-        import os
         os.remove(config_file)
         self.assertEqual(actual_config, expected_config)
 
