@@ -371,6 +371,87 @@ dirs:
       renderedName: Flags
       required: false   
 
+run:
+  renderedName: Run
+  children: entries
+  # Entry structure
+  entry:
+    filename:
+      renderedName: Filename
+      required: true
+    description:
+      renderedName: Description
+      required: false
+    parameters:
+      renderedName: Parameters
+      required: false
+    workingDir:
+      renderedName: WorkingDir
+      required: false
+    statusMsg:
+      renderedName: StatusMsg
+      required: false
+    runOnceId:
+      renderedName: RunOnceId
+      required: false
+    verb:
+      renderedName: Verb
+      required: false
+    flags:
+      renderedName: Flags
+      required: false 
+
+tasks:
+  renderedName: Tasks
+  children: entries
+  # Entry structure
+  entry:
+    name:
+      renderedName: Name
+      required: true
+    description:
+      renderedName: Description
+      required: true
+    groupDescription:
+      renderedName: GroupDescription
+      required: false
+    components:
+      renderedName: Components
+      required: false
+    flags:
+      renderedName: Flags
+      required: false 
+
+uninstallRun:
+  renderedName: UninstallRun
+  children: entries
+  # Entry structure
+  entry:
+    filename:
+      renderedName: Filename
+      required: true
+    description:
+      renderedName: Description
+      required: false
+    parameters:
+      renderedName: Parameters
+      required: false
+    workingDir:
+      renderedName: WorkingDir
+      required: false
+    statusMsg:
+      renderedName: StatusMsg
+      required: false
+    runOnceId:
+      renderedName: RunOnceId
+      required: false
+    verb:
+      renderedName: Verb
+      required: false
+    flags:
+      renderedName: Flags
+      required: false
+
 code:
   renderedName: Code
   children: raw
