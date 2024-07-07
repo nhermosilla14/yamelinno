@@ -6,7 +6,7 @@ Tests for the templates module.
 import unittest
 import os
 
-from src.templates import load_config, deep_merge_dicts, validate
+from src.templates import load_config, deep_merge_dicts, validate_template
 
 class TestTemplates(unittest.TestCase):
 
@@ -79,7 +79,7 @@ class TestTemplates(unittest.TestCase):
             'key1': 'value2',
             'key2': 'value3'
         }
-        self.assertIsNone(validate(template))
+        self.assertIsNone(validate_template(template))
 
     def test_validate_invalid_template(self):
         template = {
@@ -88,7 +88,7 @@ class TestTemplates(unittest.TestCase):
             2: 'value3'  # Invalid key type
         }
         with self.assertRaises(Exception):
-            validate(template)
+            validate_template(template)
 
 if __name__ == '__main__':
     unittest.main()

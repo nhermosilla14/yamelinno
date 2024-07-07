@@ -22,7 +22,7 @@ def load_config(config_file) -> dict:
     with open(config_file, 'r', encoding='utf-8') as file:
         template = yaml.load(file, Loader=yaml.FullLoader)
         # Validate the template
-        validate(template)
+        validate_template(template)
         # Parse the template
         if 'templates' not in template:
             # This is a leaf template
@@ -63,7 +63,7 @@ def deep_merge_dicts(source, destination) -> dict:
     return destination
 
 
-def validate(template) -> None:
+def validate_template(template) -> None:
     """
     Check that a given template is valid, i.e., it has only valid keys and values.
 
@@ -76,15 +76,14 @@ def validate(template) -> None:
         Exception: If any key in the template is not a string.
         Exception: If any value in the template is not a string or a list.
     """
+    supported_types = (str, list, dict, int, float, bool)
     if not isinstance(template, dict):
         raise TypeError("Template must be a dictionary")
     for key, value in template.items():
         if key == 'templates':
             if not isinstance(value, list):
                 raise TypeError("Templates must be a list")
-        elif isinstance(value, dict):
-            validate(value)
         elif not isinstance(key, str):
             raise KeyError(f"Invalid key type: {key}")
-        elif not isinstance(value, (str, list)):
+        elif not isinstance(value, supported_types):
             raise ValueError(f"Invalid value type: {value} for key {key}")

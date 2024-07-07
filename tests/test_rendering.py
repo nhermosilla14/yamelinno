@@ -1,7 +1,7 @@
 # pylint: disable=missing-docstring
 import unittest
 
-from src.renderization import \
+from src.rendering import \
     render, render_entry, render_section, render_key, render_raw
 
 class RenderKeyTestCase(unittest.TestCase):
