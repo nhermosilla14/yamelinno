@@ -3,20 +3,309 @@ setup:
     children: keys
     required: true      
     keys:
-      appId:
-        renderedName: AppId
-        required: true
+    # Required keys
+      
       appName:
         renderedName: AppName
         required: true
       appVersion:
         renderedName: AppVersion
         required: true
+    # Optional keys: functional
+      allowCancelDuringInstall:
+        renderedName: AllowCancelDuringInstall
+        required: false
+      allowNetworkDrive:
+        renderedName: AllowNetworkDrive
+        required: false
+      allowNoIcons:
+        renderedName: AllowNoIcons
+        required: false
+      allowRootDirectory:
+        renderedName: AllowRootDirectory
+        required: false
+      allowUNCPath:
+        renderedName: AllowUNCPath
+        required: false
+      alwaysRestart:
+        renderedName: AlwaysRestart
+        required: false
+      alwaysShowComponentsList:
+        renderedName: AlwaysShowComponentsList
+        required: false
+      alwaysShowDirOnReadyPage:
+        renderedName: AlwaysShowDirOnReadyPage
+        required: false
+      alwaysShowGroupOnReadyPage:
+        renderedName: AlwaysShowGroupOnReadyPage
+        required: false
+      alwaysUsePersonalGroup:
+        renderedName: AlwaysUsePersonalGroup
+        required: false
+      appendDefaultDirName:
+        renderedName: AppendDefaultDirName
+        required: false
+      appendDefaultGroupName:
+        renderedName: AppendDefaultGroupName
+        required: false
+      appComments:
+        renderedName: AppComments
+        required: false
+      appContact:
+        renderedName: AppContact
+        required: false
+      appId:
+      # If not provided, the installer will use the app name
+      # Recommended to provide a GUID/UUID
+        renderedName: AppId
+        required: false
+      appModifyPath:
+        renderedName: AppModifyPath
+        required: false
+      appMutex:
+        renderedName: AppMutex
+        required: false
+      appPublisher:
+        renderedName: AppPublisher
+        required: false
+      appPublisherURL:
+        renderedName: AppPublisherURL
+        required: false
+      appReadmeFile:
+        renderedName: AppReadmeFile
+        required: false
+      appSupportPhone:
+        renderedName: AppSupportPhone
+        required: false
+      appSupportURL:
+        renderedName: AppSupportURL
+        required: false
+      appUpdatesURL:
+        renderedName: AppUpdatesURL
+        required: false
+      appVerName:
+        renderedName: AppVerName
+        required: false
+      architecturesAllowed:
+        renderedName: ArchitecturesAllowed
+        required: false
+      architecturesInstallIn64BitMode:
+        renderedName: ArchitecturesInstallIn64BitMode
+        required: false
+      changesAssociations:
+        renderedName: ChangesAssociations
+        required: false
+      changesEnvironment:
+        renderedName: ChangesEnvironment
+        required: false
+      closeApplications:
+        renderedName: CloseApplications
+        required: false
+      closeApplicationsFilter:
+        renderedName: CloseApplicationsFilter
+        required: false
+      createAppDir:
+        renderedName: CreateAppDir
+        required: false
+      createUninstallRegKey:
+        renderedName: CreateUninstallRegKey
+        required: false
+      defaultDialogFontName:
+        renderedName: DefaultDialogFontName
+        required: false
       defaultDirName:
         renderedName: DefaultDirName
         required: false
-      defaultDirPath:
-        renderedName: DefaultDirPath
+      defaultGroupName:
+        renderedName: DefaultGroupName
+        required: false
+      defaultUserInfoOrg:
+        renderedName: DefaultUserInfoOrg
+        required: false
+      defaultUserInfoSerial:
+        renderedName: DefaultUserInfoSerial
+        required: false
+      dirExistsWarning:
+        renderedName: DirExistsWarning
+        required: false
+      disableDirPage:
+        renderedName: DisableDirPage
+        required: false
+      disableFinishedPage:
+        renderedName: DisableFinishedPage
+        required: false
+      disableProgramGroupPage:
+        renderedName: DisableProgramGroupPage
+        required: false
+      disableReadyMemo:
+        renderedName: DisableReadyMemo
+        required: false
+      disableReadyPage:
+        renderedName: DisableReadyPage
+        required: false
+      disableStartupPrompt:
+        renderedName: DisableStartupPrompt
+        required: false
+      disableWelcomePage:
+        renderedName: DisableWelcomePage
+        required: false
+      enableDirDoesntExistWarning:
+        renderedName: EnableDirDoesntExistWarning
+        required: false
+      extraDiskSpaceRequired:
+        renderedName: ExtraDiskSpaceRequired
+        required: false
+      infoAfterFile:
+        renderedName: InfoAfterFile
+        required: false
+      infoBeforeFile:
+        renderedName: InfoBeforeFile
+        required: false
+      languageDetectionMethod:
+        renderedName: LanguageDetectionMethod
+        required: false
+      licenseFile:
+        renderedName: LicenseFile
+        required: false
+      minVersion:
+        renderedName: MinVersion
+        required: false
+      onlyBelowVersion:
+        renderedName: OnlyBelowVersion
+        required: false
+      password:
+        renderedName: Password
+        required: false
+      privilegesRequired:
+        renderedName: PrivilegesRequired
+        required: false
+      restartApplications:
+        renderedName: RestartApplications
+        required: false
+      restartIfNeededByRun:
+        renderedName: RestartIfNeededByRun
+        required: false
+      setupLogging:
+        renderedName: SetupLogging
+        required: false
+      setupMutex:
+        renderedName: SetupMutex
+        required: false
+      showLanguageDialog:
+        renderedName: ShowLanguageDialog
+        required: false
+      showUndisplayableLanguages:
+        renderedName: ShowUndisplayableLanguages
+        required: false
+      timeStampsRounding:
+        renderedName: TimeStampsRounding
+        required: false
+      timeStampsInUTC:
+        renderedName: TimeStampsInUTC
+        required: false
+      touchDate:
+        renderedName: TouchDate
+        required: false
+      touchTime:
+        renderedName: TouchTime
+        required: false
+      uninstallable:
+        renderedName: Uninstallable
+        required: false
+      uninstallDisplayIcon:
+        renderedName: UninstallDisplayIcon
+        required: false
+      uninstallDisplayName:
+        renderedName: UninstallDisplayName
+        required: false
+      uninstallDisplaySize:
+        renderedName: UninstallDisplaySize
+        required: false
+      uninstallFilesDir:
+        renderedName: UninstallFilesDir
+        required: false
+      uninstallLogMode:
+        renderedName: UninstallLogMode
+        required: false
+      uninstallRestartComputer:
+        renderedName: UninstallRestartComputer
+        required: false
+      updateUninstallLogAppName:
+        renderedName: UpdateUninstallLogAppName
+        required: false
+      usePreviousAppDir:
+        renderedName: UsePreviousAppDir
+        required: false
+      usePreviousGroup:
+        renderedName: UsePreviousGroup
+        required: false
+      usePreviousLanguage:
+        renderedName: UsePreviousLanguage
+        required: false
+      usePreviousSetupType:
+        renderedName: UsePreviousSetupType
+        required: false
+      usePreviousTasks:
+        renderedName: UsePreviousTasks
+        required: false
+      usePreviousUserInfo:
+        renderedName: UsePreviousUserInfo
+        required: false
+      userInfoPage:
+        renderedName: UserInfoPage
+        required: false
+      
+    # Optional keys: cosmetic
+      appCopyright:
+        renderedName: AppCopyright
+        required: false
+      backColor:
+        renderedName: BackColor
+        required: false
+      backColor2:
+        renderedName: BackColor2
+        required: false
+      backColorDirection:
+        renderedName: BackColorDirection
+        required: false
+      backSolid:
+        renderedName: BackSolid
+        required: false
+      flatComponentsList:
+        renderedName: FlatComponentsList
+        required: false
+      setupIconFile:
+        renderedName: SetupIconFile
+        required: false
+      showComponentSizes:
+        renderedName: ShowComponentSizes
+        required: false
+      showTasksTreeLines:
+        renderedName: ShowTasksTreeLines
+        required: false
+      windowShowCaption:
+        renderedName: WindowShowCaption
+        required: false
+      windowStartMaximized:
+        renderedName: WindowStartMaximized
+        required: false
+      windowResizable:
+        renderedName: WindowResizable
+        required: false
+      windowVisible:
+        renderedName: WindowVisible
+        required: false
+      wizardImageBackColor:
+        renderedName: WizardImageBackColor
+        required: false
+      wizardImageFile:
+        renderedName: WizardImageFile
+        required: false
+      wizardImageStretch:
+        renderedName: WizardImageStretch
+        required: false
+      wizardSmallImageFile:
+        renderedName: WizardSmallImageFile
         required: false
   
 files:
