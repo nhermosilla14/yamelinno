@@ -509,6 +509,10 @@ messages:
   renderedName: Messages
   children: raw
 
+customMessages:
+  renderedName: CustomMessages
+  children: raw
+
 registry:
   renderedName: Registry
   children: entries
