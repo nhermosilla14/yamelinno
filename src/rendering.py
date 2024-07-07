@@ -55,6 +55,37 @@ def load_schema(schema_file) -> dict:
         return schema
 
 
+def render_value(value) -> str:
+    """
+    Render a value to a string following the iss format.
+    For example: 
+    - A list of values should be rendered as space-separated values.
+    - A string should be rendered as is (with quotes).
+    - A number should be rendered as a string.
+    - A boolean should be rendered as "yes" or "no" (without quotes)
+    - A double-quote should be rendered as two double-quotes.
+
+    Args:
+        value: The value to be rendered.
+
+    Returns:
+        str: The rendered value as a string.
+    """
+    if isinstance(value, list):
+        # If the value is a list, render it as space-separated values
+        return " ".join(value)
+    elif isinstance(value, str):
+        # If the value is a string, render it with quotes
+        # and escape any double-quotes
+        return f'"{value.replace("\"", "\"\"")}"'
+    elif isinstance(value, bool):
+        # If the value is a boolean, render it as "yes" or "no"
+        return "yes" if value else "no"
+    else:
+        # If the value is anything else, render it as a string
+        return str(value)
+
+
 def render_key(key, value, section_definition) -> str:
     """
     Renders a key-value pair based on the given section definition.
