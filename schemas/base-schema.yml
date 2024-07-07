@@ -109,6 +109,9 @@ setup:
     closeApplicationsFilter:
       renderedName: CloseApplicationsFilter
       required: false
+    compression:
+      renderedName: Compression
+      required: false
     createAppDir:
       renderedName: CreateAppDir
       required: false
@@ -178,6 +181,9 @@ setup:
     onlyBelowVersion:
       renderedName: OnlyBelowVersion
       required: false
+    outputDir:
+      renderedName: OutputDir
+      required: false
     password:
       renderedName: Password
       required: false
@@ -201,6 +207,9 @@ setup:
       required: false
     showUndisplayableLanguages:
       renderedName: ShowUndisplayableLanguages
+      required: false
+    solidCompression:
+      renderedName: SolidCompression
       required: false
     timeStampsRounding:
       renderedName: TimeStampsRounding
@@ -311,6 +320,9 @@ setup:
       required: false
     wizardSmallImageFile:
       renderedName: WizardSmallImageFile
+      required: false
+    wizardStyle:
+      renderedName: WizardStyle
       required: false
 
 files:
