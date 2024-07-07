@@ -449,6 +449,66 @@ languages:
       renderedName: InfoAfterFile
       required: false
 
+langOptions:
+  renderedName: LangOptions
+  children: keys
+  keys:
+    languageName:
+      renderedName: LanguageName
+      required: false
+    languageID:
+      renderedName: LanguageID
+      required: false
+    copyrightFontName:
+      renderedName: CopyrightFontName
+      required: false
+    copyrightFontSize:
+      renderedName: CopyrightFontSize
+      required: false
+    dialogFontName:
+      renderedName: DialogFontName
+      required: false
+    dialogFontSize:
+      renderedName: DialogFontSize
+      required: false
+    titleFontName:
+      renderedName: TitleFontName
+      required: false
+    titleFontSize:
+      renderedName: TitleFontSize
+      required: false
+    welcomeFontName:
+      renderedName: WelcomeFontName
+      required: false
+    welcomeFontSize:
+      renderedName: WelcomeFontSize
+      required: false
+    welcomeLabelFontName:
+      renderedName: WelcomeLabelFontName
+      required: false
+    welcomeLabelFontSize:
+      renderedName: WelcomeLabelFontSize
+      required: false
+    welcomeLabelFontColor:
+      renderedName: WelcomeLabelFontColor
+      required: false
+    dirFontName:
+      renderedName: DirFontName
+      required: false
+    dirFontSize:
+      renderedName: DirFontSize
+      required: false
+    languageCodePage:
+      renderedName: LanguageCodePage
+      required: false
+    rightToLeft:
+      renderedName: RightToLeft
+      required: false
+
+messages:
+  renderedName: Messages
+  children: raw
+
 registry:
   renderedName: Registry
   children: entries
@@ -526,6 +586,21 @@ tasks:
     flags:
       renderedName: Flags
       required: false 
+
+types:
+  renderedName: Types
+  children: entries
+  # Entry structure
+  entry:
+    name:
+      renderedName: Name
+      required: true
+    description:
+      renderedName: Description
+      required: true
+    flags:
+      renderedName: Flags
+      required: false
 
 uninstallRun:
   renderedName: UninstallRun
