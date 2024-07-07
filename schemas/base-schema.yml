@@ -1,10 +1,15 @@
+# This is a generic schema for an Inno Setup script.
+# It is highly recommended to extend or restrict this schema to
+# match the specific requirements of your project. 
+# For example, you may want to add additional keys, remove keys, or
+# make certain keys required.
+
 setup:
     renderedName: Setup
     children: keys
     required: true      
     keys:
     # Required keys
-      
       appName:
         renderedName: AppName
         required: true
@@ -319,6 +324,31 @@ files:
       destDir:
         renderedName: DestDir  
         required: true
+      # Optional keys
+      destName:
+        renderedName: DestName
+        required: false
+      excludes:
+        renderedName: Excludes
+        required: false
+      externalSize:
+        renderedName: ExternalSize
+        required: false
+      copyMode:
+        renderedName: CopyMode
+        required: false
+      attribs:
+        renderedName: Attribs
+        required: false
+      permissions:
+        renderedName: Permissions
+        required: false
+      fontInstall:
+        renderedName: FontInstall
+        required: false
+      strongAssemblyName:
+        renderedName: StrongAssemblyName
+        required: false
       flags:
         renderedName: Flags
         required: false
