@@ -54,7 +54,8 @@ def load_schema(schema_file) -> dict:
         schema = yaml.load(file, Loader=yaml.FullLoader)
         return schema
 
-def render_key(key, value, section_definition):
+
+def render_key(key, value, section_definition) -> str:
     """
     Renders a key-value pair based on the given section definition.
 
@@ -81,7 +82,7 @@ def render_key(key, value, section_definition):
     rendered_name = key_definition['renderedName']
     return f"{rendered_name}={value}"
 
-def render_entry(entry, section_definition):
+def render_entry(entry, section_definition) -> str:
     """
     Renders an entry based on the given entry and section definition.
 
@@ -120,19 +121,34 @@ def render_entry(entry, section_definition):
                 for v in value:
                     rendered_entry += f" {v}"
             else:
-                rendered_entry += f"{rendered_name}: {value}; "
+                rendered_entry += f"{rendered_name}: {value}"
+            rendered_entry += "; "
+        rendered_entry = rendered_entry[:-2]  # Remove the last space and semicolon
         return rendered_entry
 
 
-def render_raw(raw_str, section_definition):
+def render_raw(raw_str, section_definition) -> str:
+    """
+    Render the raw field of a section.
+
+    Args:
+        raw_str (str): The raw string to be rendered.
+        section_definition (dict): The definition of the section.
+
+    Returns:
+        str: The rendered raw string.
+
+    Raises:
+        KeyError: If the section has incompatible children type.
+    """
     # Check if the section has a raw field
     if section_definition['children'] != 'raw':
-        raise KeyError(f"Incompatible children type found.")
+        raise KeyError("Incompatible children type found.")
     # Render the raw field
     return raw_str
 
 
-def render_section(section, section_definition):
+def render_section(section, section_definition) -> str:
     """
     Renders a section based on its definition.
 
@@ -148,25 +164,29 @@ def render_section(section, section_definition):
     if 'children' not in section_definition:
         raise KeyError(f"No children definition found for section {section['name']}")
 
-    rendered_section = ""
+    rendered_section: str = ""
     # Get the rendered name of the section
     rendered_section += f"[{section_definition['renderedName']}]\n"
-    # Check if the section has keys or entries
+    # Check if the section has keys, entries or raw field
     if section_definition['children'] == 'keys':
         # Render the keys
         for key, value in section.items():
             rendered_section += render_key(key, value, section_definition)
             rendered_section += "\n"
-        rendered_section += "\n"
     elif section_definition['children'] == 'entries':
         # Render the entries
         for entry in section:
             rendered_section += render_entry(entry, section_definition)
-        rendered_section += "\n"
+            rendered_section += "\n"
+    elif section_definition['children'] == 'raw':
+        # Render the raw field
+        raw_str = section.get('raw', '')
+        rendered_section += render_raw(raw_str, section_definition)
+    rendered_section += "\n"
     return rendered_section
 
 
-def render(config, schema):
+def render(config, schema) -> str:
     """
     Render the config file using the provided schema.
 
@@ -180,7 +200,6 @@ def render(config, schema):
     rendered_config = ""
     for section_name, section in config.items():
         section_definition = schema[section_name]
-        rendered_config += render_section(section, section_definition)
+        rendered_section = render_section(section, section_definition)
+        rendered_config += rendered_section
     return rendered_config
-
-

@@ -1,3 +1,4 @@
+# pylint: disable=missing-docstring
 """
 Tests for the templates module.
 """
@@ -12,9 +13,9 @@ class TestTemplates(unittest.TestCase):
     def test_load_config_leaf_template(self):
         # Gen fake config file
         config_file = 'leaf_template.yaml'
-        with open(config_file, 'w') as file:
+        with open(config_file, 'w', encoding='utf-8') as file:
             file.write('key0: value1\nkey1: value2\nkey2: value3\n')
-    
+
         expected_config = {
             'key0': 'value1',
             'key1': 'value2',
@@ -28,7 +29,7 @@ class TestTemplates(unittest.TestCase):
 
     def test_load_config_parent_template(self):
         config_file = 'parent_template.yaml'
-        with open(config_file, 'w') as file:
+        with open(config_file, 'w', encoding='utf-8') as file:
             file.write('key0: value1\nkey1: value2\nkey2: value3\nkey3: value4\nkey4: value5\n')
 
         expected_config = {

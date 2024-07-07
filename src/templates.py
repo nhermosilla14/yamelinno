@@ -7,7 +7,7 @@ are used if there are conflicts.
 
 import yaml
 
-def load_config(config_file) -> list:
+def load_config(config_file) -> dict:
     """
     Load a config file with or without templates.
     If a template has children templates, they are loaded recursively.
@@ -16,7 +16,7 @@ def load_config(config_file) -> list:
         config_file (str): The path to the config file.
 
     Returns:
-        list: The loaded config as a list.
+        list: The loaded config as a dict.
 
     """
     with open(config_file, 'r', encoding='utf-8') as file:
@@ -41,7 +41,7 @@ def load_config(config_file) -> list:
 
 
 
-def deep_merge_dicts(source, destination):
+def deep_merge_dicts(source, destination) -> dict:
     """
     Recursively merges source and destination dictionaries.
 
@@ -63,7 +63,7 @@ def deep_merge_dicts(source, destination):
     return destination
 
 
-def validate(template):
+def validate(template) -> None:
     """
     Check that a given template is valid, i.e., it has only valid keys and values.
 

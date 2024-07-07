@@ -8,7 +8,7 @@ import argparse
 from src.templates import load_config
 from src.renderization import render, load_schema
 
-def get_startup_configurations():
+def get_startup_configurations() -> argparse.Namespace:
     """
     Retrieves the startup configurations from the command line arguments.
 
@@ -54,7 +54,7 @@ def get_startup_configurations():
     return args
 
 
-def main():
+def main() -> None:
     """
     Main function that loads the configuration and schema files,
     renders the configuration using the schema, and prints the

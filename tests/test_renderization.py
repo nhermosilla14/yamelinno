@@ -1,3 +1,4 @@
+# pylint: disable=missing-docstring
 import unittest
 
 from src.renderization import \
@@ -45,7 +46,7 @@ class RenderEntryTestCase(unittest.TestCase):
                 }
             }
         }
-        expected_output = 'KeyName: value; '
+        expected_output = 'KeyName: value'
         rendered_entry = render_entry(entry, section_definition)
         self.assertEqual(rendered_entry, expected_output)
 
@@ -85,14 +86,30 @@ class RenderEntryTestCase(unittest.TestCase):
             render_entry(entry, section_definition)
 
 class RenderRawTestCase(unittest.TestCase):
-    def test_render_raw(self):
+    def test_render_raw_return(self):
+        raw_code = 'A single-line value'
+        section_definition = {
+            'renderedName': 'Code',
+            'required': False,
+            'children': 'raw',
+        }
+        expected_output = 'A single-line value'
+        rendered_raw = render_raw(raw_code, section_definition)
+
+        self.assertIsInstance(rendered_raw, str)
+        self.assertEqual(rendered_raw, expected_output)
+
+    def test_render_raw_multiline(self):
         section_definition = {
                 'renderedName': 'Code',
                 'required': False,
                 'children': 'raw',
             }
-        raw_code = 'A multi-line\nvalue\n'
-        expected_output = 'A multi-line\nvalue\n'
+        raw_code = "".join([
+                'A multi-line\n',
+                'value\n'
+        ])
+        expected_output = raw_code
         rendered_raw = render_raw(raw_code, section_definition)
         self.assertEqual(rendered_raw, expected_output)
 
@@ -112,10 +129,13 @@ class RenderSectionTestCase(unittest.TestCase):
                 }
             }
         }
-        expected_output = '[SectionName]\nKeyName=value\n\n'
+        expected_output = "".join([
+            '[SectionName]\n',
+            'KeyName=value\n\n'
+        ])
         rendered_section = render_section(section, section_definition)
         self.assertEqual(rendered_section, expected_output)
-    
+
 
     def test_render_section_with_many_keys(self):
         section = {
@@ -140,10 +160,14 @@ class RenderSectionTestCase(unittest.TestCase):
                 }
             }
         }
-        expected_output = '[SectionName]\nKeyName=value\nKeyName2=value2\n\n'
+        expected_output = "".join([
+            '[SectionName]\n',
+            'KeyName=value\n',
+            'KeyName2=value2\n\n'
+        ])
         rendered_section = render_section(section, section_definition)
         self.assertEqual(rendered_section, expected_output)
-    
+
 
     def test_render_section_with_entries(self):
         section = [
@@ -151,7 +175,8 @@ class RenderSectionTestCase(unittest.TestCase):
                 'keyName': 'value1'
             },
             {
-                'keyName': 'value2'
+                'keyName': 'value2',
+                'anotherKeyName': 'value3'
             }
         ]
         section_definition = {
@@ -161,10 +186,18 @@ class RenderSectionTestCase(unittest.TestCase):
                 'keyName': {
                     'renderedName': 'KeyName',
                     'required': True
+                },
+                'anotherKeyName': {
+                    'renderedName': 'AnotherKeyName',
+                    'required': False
                 }
             }
         }
-        expected_output = '[SectionName]\nKeyName: value1; KeyName: value2; \n'
+        expected_output = "".join([
+            '[SectionName]\n',
+            'KeyName: value1\n',
+            'KeyName: value2; AnotherKeyName: value3\n\n'
+        ])
         rendered_section = render_section(section, section_definition)
         self.assertEqual(rendered_section, expected_output)
 
@@ -195,6 +228,33 @@ class RenderSectionTestCase(unittest.TestCase):
             render_section(section, section_definition)
 
 
+    def test_render_section_with_raw_code(self):
+        # if yaml is not imported, do it
+        if 'yaml' not in globals():
+            import yaml #pylint: disable=import-outside-toplevel
+        section_yml = "".join([
+            "raw: |\n",
+            "  function main() {\n",
+            "      console.log(\"Hello World!\");\n",
+            "  }"
+        ])
+        section = yaml.load(section_yml, Loader=yaml.FullLoader)
+        self.assertIsInstance(section, dict)
+        section_definition = {
+            'renderedName': 'Code',
+            'required': False,
+            'children': 'raw',
+        }
+
+        expected_output = "".join([
+            '[Code]\n',
+            'function main() {\n',
+            '    console.log("Hello World!");\n',
+            '}\n'
+        ])
+        rendered_section = render_section(section, section_definition)
+        self.assertEqual(rendered_section, expected_output)
+
 
 class RenderTestCase(unittest.TestCase):
     def test_render_with_keys(self):
@@ -215,7 +275,11 @@ class RenderTestCase(unittest.TestCase):
                 }
             }
         }
-        expected_output = '[SectionName]\nKeyName=value\n\n'
+        expected_output = [
+            '[SectionName]\n'
+            'KeyName=value\n\n'
+        ]
+        expected_output = "".join(expected_output)
         rendered_config = render(config, schema)
         self.assertEqual(rendered_config, expected_output)
 
@@ -242,7 +306,11 @@ class RenderTestCase(unittest.TestCase):
                 }
             }
         }
-        expected_output = '[SectionName]\nKeyName: value1; KeyName: value2; \n'
+        expected_output = "".join([
+            "[SectionName]\n"
+            "KeyName: value1\n"
+            "KeyName: value2\n\n"
+        ])
         rendered_config = render(config, schema)
         self.assertEqual(rendered_config, expected_output)
 
