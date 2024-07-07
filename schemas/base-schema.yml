@@ -428,6 +428,54 @@ ini:
       renderedName: Flags
       required: false
 
+languages:
+  renderedName: Languages
+  children: entries
+  # Entry structure
+  entry:
+    name:
+      renderedName: Name
+      required: true
+    messagesFile:
+      renderedName: MessagesFile
+      required: true
+    licenseFile:
+      renderedName: LicenseFile
+      required: false
+    infoBeforeFile:
+      renderedName: InfoBeforeFile
+      required: false
+    infoAfterFile:
+      renderedName: InfoAfterFile
+      required: false
+
+registry:
+  renderedName: Registry
+  children: entries
+  # Entry structure
+  entry:
+    root:
+      renderedName: Root
+      required: true
+    subkey:
+      renderedName: Subkey
+      required: true
+    valueName:
+      renderedName: ValueName
+      required: false
+    valueType:
+      renderedName: ValueType
+      required: false
+    valueData:
+      renderedName: ValueData
+      required: false
+    permissions:
+      renderedName: Permissions
+      required: false
+    flags:
+      renderedName: Flags
+      required: false
+
 run:
   renderedName: Run
   children: entries
