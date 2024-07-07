@@ -371,6 +371,63 @@ dirs:
       renderedName: Flags
       required: false   
 
+icons:
+  renderedName: Icons
+  children: entries
+  # Entry structure
+  entry:
+    name:
+      renderedName: Name
+      required: true
+    filename:
+      renderedName: Filename
+      required: true
+    parameters:
+      renderedName: Parameters
+      required: false
+    workingDir:
+      renderedName: WorkingDir
+      required: false
+    hotKey:
+      renderedName: HotKey
+      required: false
+    comment:
+      renderedName: Comment
+      required: false
+    iconFilename:
+      renderedName: IconFilename
+      required: false
+    iconIndex:
+      renderedName: IconIndex
+      required: false
+    appUserModelID:
+      renderedName: AppUserModelID
+      required: false
+    flags:
+      renderedName: Flags
+      required: false
+
+ini:
+  renderedName: Ini
+  children: entries
+  # Entry structure
+  entry:
+    filename:
+      renderedName: Filename
+      required: true
+    section:
+      renderedName: Section
+      required: true
+    key:
+      renderedName: Key
+      required: true
+    string:
+      renderedName: String
+      required: true
+    flags:
+      renderedName: Flags
+      required: false
+
 run:
   renderedName: Run
   children: entries
@@ -451,6 +508,30 @@ uninstallRun:
     flags:
       renderedName: Flags
       required: false
+
+installDelete:
+  renderedName: InstallDelete
+  children: entries
+  # Entry structure
+  entry:
+    type:
+      renderedName: Type
+      required: true
+    name:
+      renderedName: Name
+      required: true
+
+uninstallDelete:
+  renderedName: UninstallDelete
+  children: entries
+  # Entry structure
+  entry:
+    type:
+      renderedName: Type
+      required: true
+    name:
+      renderedName: Name
+      required: true
 
 code:
   renderedName: Code
