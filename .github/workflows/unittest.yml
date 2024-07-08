@@ -19,14 +19,6 @@ jobs:
       if: github.ref == 'refs/heads/main'
       run: python -m coverage json
       
-    - name: Generate output dir
-      if: github.ref == 'refs/heads/main'
-      run: mkdir ./coverage
-      
-    - name: Generate coverage html report
-      if: github.ref == 'refs/heads/main'
-      run: python -m coverage html -d ./coverage
-        
     - name: Create coverage badges
       uses: jaywcjlove/coverage-badges-cli@main
       if: github.ref == 'refs/heads/main'
@@ -42,5 +34,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./coverage
-        destination_dir: coverage
         
