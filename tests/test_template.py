@@ -9,9 +9,10 @@ import os
 from src.templates import (
     load_config,
     render_template,
-    deep_merge_dicts, 
+    deep_merge_dicts,
     validate_template,
 )
+
 
 def compare_dicts(dict1, dict2, raise_error=False):
     """
@@ -26,28 +27,48 @@ def compare_dicts(dict1, dict2, raise_error=False):
     """
     if len(dict1) != len(dict2):
         if raise_error:
-            raise ValueError(f"The dictionaries do not have the same number of keys. {dict1.keys()} != {dict2.keys()}")
+            output_error = "".join([
+                "The dictionaries do not have the same number of keys.\n",
+                f"{dict1.keys()} != {dict2.keys()}"
+            ])
+            raise ValueError(output_error)
         return False
     for key, value in dict1.items():
         if isinstance(value, dict):
             if not compare_dicts(value, dict2[key]):
                 if raise_error:
-                    raise ValueError(f"Value for key {key} does not match. Value: {value} != {dict2[key]}")
+                    output_error = "".join([
+                        f"Value for key {key} does not match.\n",
+                        f"{value} != {dict2[key]}"
+                    ])
+                    raise ValueError(output_error)
                 return False
         elif isinstance(value, list):
             if len(value) != len(dict2[key]):
                 if raise_error:
-                    raise ValueError(f"Value for key {key} does not match. Value: {value} != {dict2[key]}")
+                    output_error = "".join([
+                        "The lists do not have the same number of items.\n",
+                        f"{value} != {dict2[key]}"
+                    ])
+                    raise ValueError(output_error)
                 return False
             # The order of the items in the list does not matter
             if not all(item in dict2[key] for item in value):
                 if raise_error:
-                    raise ValueError(f"Value for key {key} does not match. Value: {value} != {dict2[key]}")
+                    output_error = "".join([
+                        "The lists do not have the same items.\n",
+                        f"{value} != {dict2[key]}"
+                    ])
+                    raise ValueError(output_error)
                 return False
         else:
             if value != dict2[key]:
                 if raise_error:
-                    raise ValueError(f"Value for key {key} does not match. Value: {value} != {dict2[key]}")
+                    output_error = "".join([
+                        f"Value for key {key} does not match.\n",
+                        f"{value} != {dict2[key]}"
+                    ])
+                    raise ValueError(output_error)
                 return False
     return True
 
@@ -69,15 +90,16 @@ class TestLoadConfig(unittest.TestCase):
         os.remove(config_file)
         self.assertEqual(actual_config, expected_config)
 
-
     def test_load_config_parent_template(self):
         template_file = 'parent_template.yml'
         config_file = 'child_template.yml'
         with open(template_file, 'w', encoding='utf-8') as file:
-            file.write('key0: value1\nkey1: value2\nkey2: value3\nkey3: value4\nkey4: value5\n')
+            file.write(
+                'key0: value1\nkey1: value2\nkey2: value3\nkey3: value4\nkey4: value5\n')
 
         with open(config_file, 'w', encoding='utf-8') as file:
-            file.write('templates:\n  - parent_template.yml\nkey2: value1\nkey3: value2\n')
+            file.write(
+                'templates:\n  - parent_template.yml\nkey2: value1\nkey3: value2\n')
 
         expected_config = {
             'key0': 'value1',
@@ -95,7 +117,8 @@ class TestLoadConfig(unittest.TestCase):
     def test_load_config_invalid_template(self):
         config_file = 'invalid_template.yaml'
         with open(config_file, 'w', encoding='utf-8') as file:
-            file.write('templates:\n  - fake_template.yml\nkey0: value1\nkey1: value2\n2: value3\n')
+            file.write(
+                'templates:\n  - fake_template.yml\nkey0: value1\nkey1: value2\n2: value3\n')
 
         with self.assertRaises(Exception):
             load_config(config_file)
@@ -110,10 +133,10 @@ class TestLoadConfig(unittest.TestCase):
 
         with open(config_file, 'w', encoding='utf-8') as file:
             content = "".join([
-                 'templates:\n'
+                'templates:\n'
                 f'  - path: {template_file}\n',
-                 '    inputs:\n',
-                 '      key2: value2\n'
+                '    inputs:\n',
+                '      key2: value2\n'
             ])
             file.write(content)
 
@@ -127,22 +150,21 @@ class TestLoadConfig(unittest.TestCase):
         os.remove(template_file)
         self.assertEqual(actual_config, expected_config)
 
-
     def test_load_config_with_repeated_template_args(self):
         template_file = 'template_with_args.yml'
         config_file = 'config_with_args.yml'
         with open(template_file, 'w', encoding='utf-8') as file:
             file.write('section:\n  - key1: !key2\n')
-        
+
         with open(config_file, 'w', encoding='utf-8') as file:
             content = "".join([
-                 'templates:\n'
+                'templates:\n'
                 f'  - path: {template_file}\n',
-                 '    inputs:\n',
-                 '      key2: value2\n',
+                '    inputs:\n',
+                '      key2: value2\n',
                 f'  - path: {template_file}\n',
-                 '    inputs:\n',
-                 '      key2: value3\n'
+                '    inputs:\n',
+                '      key2: value3\n'
             ])
             file.write(content)
 
@@ -171,7 +193,7 @@ class TestLoadConfig(unittest.TestCase):
                 '    subkey1: subvalue1\n'
             ])
             file.write(content)
-        
+
         with open(template_file1, 'w', encoding='utf-8') as file:
             content = "".join([
                 'key1: value3\n',
@@ -182,7 +204,7 @@ class TestLoadConfig(unittest.TestCase):
 
         with open(config_file, 'w', encoding='utf-8') as file:
             content = "".join([
-                 'templates:\n'
+                'templates:\n'
                 f'  - {template_file0}\n',
                 f'  - path: {template_file1}\n',
                  '    overwrite: true\n'
@@ -220,7 +242,7 @@ class TestLoadConfig(unittest.TestCase):
                 '    subkey1: subvalue1\n'
             ])
             file.write(content)
-        
+
         with open(template_file1, 'w', encoding='utf-8') as file:
             content = "".join([
                 'key1: value3\n',
@@ -231,7 +253,7 @@ class TestLoadConfig(unittest.TestCase):
 
         with open(config_file, 'w', encoding='utf-8') as file:
             content = "".join([
-                 'templates:\n'
+                'templates:\n'
                 f'  - {template_file0}\n',
                 f'  - path: {template_file1}\n',
                  '    overwrite: false\n'
@@ -287,6 +309,7 @@ class TestRenderTemplate(unittest.TestCase):
         ])
         actual_rendered = render_template(src_template, input_args)
         self.assertEqual(actual_rendered, expected_rendered)
+
 
 class TestDeepMergeDicts(unittest.TestCase):
     def test_deep_merge_dicts_no_conflicts(self):
@@ -354,7 +377,6 @@ class TestDeepMergeDicts(unittest.TestCase):
         }
         actual_merged = deep_merge_dicts(source, destination)
         self.assertTrue(compare_dicts(actual_merged, expected_merged))
-
 
     def test_deep_merge_dicts_with_dict_list(self):
         source = {
@@ -451,6 +473,7 @@ class TestValidateTemplate(unittest.TestCase):
         }
         with self.assertRaises(Exception):
             validate_template(template)
+
 
 if __name__ == '__main__':
     unittest.main()
