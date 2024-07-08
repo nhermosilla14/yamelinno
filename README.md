@@ -1,5 +1,5 @@
 # yamelinno
-[![Pylint](https://github.com/nhermosilla14/yamelinno/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/nhermosilla14/yamelinno/actions/workflows/pylint.yml) [![Tests](https://github.com/nhermosilla14/yamelinno/actions/workflows/unittest.yml/badge.svg?branch=main)](https://github.com/nhermosilla14/yamelinno/actions/workflows/unittest.yml) ![Coverage](https://nhermosilla14.github.io/yamelinno/badges.svg)
+[![Pylint](https://github.com/nhermosilla14/yamelinno/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/nhermosilla14/yamelinno/actions/workflows/pylint.yml) [![Tests](https://github.com/nhermosilla14/yamelinno/actions/workflows/unittest.yml/badge.svg?branch=main)](https://github.com/nhermosilla14/yamelinno/actions/workflows/unittest.yml) ![Coverage](https://nhermosilla14.github.io/yamelinno/coverage/badges.svg)
 
 A tool to render yaml into InnoSetup iss files.
 
