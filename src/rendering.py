@@ -52,7 +52,7 @@ def render_value(value, target_type=None) -> str:
     if isinstance(value, str):
         # If the value is a string, render it with quotes
         # and escape any double-quotes
-        return f'"{value.replace("\"", "\"\"")}"'
+        return '"' + value.replace("\"", "\"\"") + '"'
     if isinstance(value, bool):
         # If the value is a boolean, render it as "yes" or "no"
         return "yes" if value else "no"
