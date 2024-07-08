@@ -166,7 +166,7 @@ templates:
     # Values to be used in the template. To use special characters, such as `:`, or `#`, you can surround the value with single quotes. Using '!' is unsupported yet.
       - sourceFile: 'C:\LICENSE'
       # If overwrite is true, the values in the template will overwrite the values in the previous templates. If false, the values in the template will be merged with the values in the previous templates, trying to preserve as much information as possible. That is, dictionaries will be merged (only conflicting keys will be overwritten), and lists will be appended.
-      overwrite: false
+    overwrite: false
 ```
 
 ```iss
