@@ -575,6 +575,9 @@ run:
     runOnceId:
       renderedName: RunOnceId
       required: false
+    tasks:
+      renderedName: Tasks
+      required: false
     verb:
       renderedName: Verb
       required: false
