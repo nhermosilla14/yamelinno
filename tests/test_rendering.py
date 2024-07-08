@@ -1,11 +1,93 @@
 # pylint: disable=missing-docstring
 import unittest
+import os
 
-from src.rendering import \
-    render, render_entry, render_section, render_key, render_raw
+from src.rendering import (
+    load_schema,
+    render_value,
+    render_key,
+    render_entry,
+    render_raw,
+    render_section,
+    render
+)
+
+class LoadSchemaTestCase(unittest.TestCase):
+    def test_load_schema(self):
+        schema_file = 'faked_schema.yml'
+        schema_file_content = "".join([
+            'sectionName:\n',
+            '  renderedName: SectionName\n',
+            '  children: keys\n',
+            '  keys:\n',
+            '    keyName:\n',
+            '      renderedName: KeyName\n',
+            '      required: True\n',
+            '    keyName2:\n',
+            '      renderedName: KeyName2\n',
+            '      type: str\n',
+            '    keyName3:\n',
+            '      renderedName: KeyName3\n',
+            '      type: int\n'
+            '      required: False\n'
+        ])
+
+        with open(schema_file, 'w', encoding='utf-8') as file:
+            file.write(schema_file_content)
+        expected_schema = {
+            'sectionName': {
+                'renderedName': 'SectionName',
+                'children': 'keys',
+                'keys': {
+                    'keyName': {
+                        'renderedName': 'KeyName',
+                        'required': True
+                    },
+                    'keyName2': {
+                        'renderedName': 'KeyName2',
+                        'type': 'str'
+                    },
+                    'keyName3': {
+                        'renderedName': 'KeyName3',
+                        'type': 'int',
+                        'required': False
+                    }
+                }
+            }
+        }
+        actual_schema = load_schema(schema_file)
+        # Clean up
+        os.remove(schema_file)
+        self.assertEqual(actual_schema, expected_schema)
+
+
+class RenderValueTestCase(unittest.TestCase):
+    def test_render_value_str(self):
+        value = 'value'
+        expected_output = '"value"'
+        rendered_value = render_value(value)
+        self.assertEqual(rendered_value, expected_output)
+
+    def test_render_value_list(self):
+        value = ['value1', 'value2']
+        expected_output = 'value1 value2'
+        rendered_value = render_value(value)
+        self.assertEqual(rendered_value, expected_output)
+    
+    def test_render_value_bool(self):
+        value = True
+        expected_output = 'yes'
+        rendered_value = render_value(value)
+        self.assertEqual(rendered_value, expected_output)
+    
+    def test_render_value_other(self):
+        value = 42
+        expected_output = '42'
+        rendered_value = render_value(value)
+        self.assertEqual(rendered_value, expected_output)
 
 class RenderKeyTestCase(unittest.TestCase):
-    def test_render_key(self):
+    def test_render_none_typed_key(self):
         key = 'keyName'
         value = 'value'
         section_definition = {
@@ -16,7 +98,7 @@ class RenderKeyTestCase(unittest.TestCase):
                 }
             }
         }
-        expected_output = 'KeyName=value'
+        expected_output = 'KeyName="value"'
         rendered_key = render_key(key, value, section_definition)
         self.assertEqual(rendered_key, expected_output)
 
@@ -46,7 +128,8 @@ class RenderEntryTestCase(unittest.TestCase):
                 }
             }
         }
-        expected_output = 'KeyName: value'
+        # Without a type hint, the expected_output is a string
+        expected_output = 'KeyName: "value"'
         rendered_entry = render_entry(entry, section_definition)
         self.assertEqual(rendered_entry, expected_output)
 
@@ -115,7 +198,7 @@ class RenderRawTestCase(unittest.TestCase):
 
 
 class RenderSectionTestCase(unittest.TestCase):
-    def test_render_section_with_single_key(self):
+    def test_render_section_with_single_none_typed_key(self):
         section = {
             'keyName': 'value'
         }
@@ -131,13 +214,13 @@ class RenderSectionTestCase(unittest.TestCase):
         }
         expected_output = "".join([
             '[SectionName]\n',
-            'KeyName=value\n\n'
+            'KeyName="value"\n\n'
         ])
         rendered_section = render_section(section, section_definition)
         self.assertEqual(rendered_section, expected_output)
 
 
-    def test_render_section_with_many_keys(self):
+    def test_render_section_with_many_none_typed_keys(self):
         section = {
             'keyName': 'value',
             'keyName2': 'value2'
@@ -162,8 +245,8 @@ class RenderSectionTestCase(unittest.TestCase):
         }
         expected_output = "".join([
             '[SectionName]\n',
-            'KeyName=value\n',
-            'KeyName2=value2\n\n'
+            'KeyName="value"\n',
+            'KeyName2="value2"\n\n'
         ])
         rendered_section = render_section(section, section_definition)
         self.assertEqual(rendered_section, expected_output)
@@ -195,8 +278,8 @@ class RenderSectionTestCase(unittest.TestCase):
         }
         expected_output = "".join([
             '[SectionName]\n',
-            'KeyName: value1\n',
-            'KeyName: value2; AnotherKeyName: value3\n\n'
+            'KeyName: "value1"\n',
+            'KeyName: "value2"; AnotherKeyName: "value3"\n\n'
         ])
         rendered_section = render_section(section, section_definition)
         self.assertEqual(rendered_section, expected_output)
@@ -277,7 +360,7 @@ class RenderTestCase(unittest.TestCase):
         }
         expected_output = [
             '[SectionName]\n'
-            'KeyName=value\n\n'
+            'KeyName="value"\n\n'
         ]
         expected_output = "".join(expected_output)
         rendered_config = render(config, schema)
@@ -308,8 +391,8 @@ class RenderTestCase(unittest.TestCase):
         }
         expected_output = "".join([
             "[SectionName]\n"
-            "KeyName: value1\n"
-            "KeyName: value2\n\n"
+            "KeyName: \"value1\"\n"
+            "KeyName: \"value2\"\n\n"
         ])
         rendered_config = render(config, schema)
         self.assertEqual(rendered_config, expected_output)
