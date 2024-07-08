@@ -27,18 +27,16 @@ def load_config(config_file) -> dict:
         if 'templates' not in template:
             # This is a leaf template
             return template
-        else:
-            # This is a parent template
-            template_queue = []
-            merged_config = {}
-            for t in template['templates']:
-                template_queue.append(load_config(t))
-            for t in template_queue:
-                merged_config = deep_merge_dicts(t, merged_config)
-            template.pop('templates', None)
-            merged_config = deep_merge_dicts(template, merged_config)
-            return merged_config
-
+        # This is a parent template
+        template_queue = []
+        merged_config = {}
+        for t in template['templates']:
+            template_queue.append(load_config(t))
+        for t in template_queue:
+            merged_config = deep_merge_dicts(t, merged_config)
+        template.pop('templates', None)
+        merged_config = deep_merge_dicts(template, merged_config)
+        return merged_config
 
 
 def deep_merge_dicts(source, destination) -> dict:
