@@ -13,8 +13,57 @@ from src.templates import (
     validate_template,
 )
 
+def assert_equal_length(iter1, iter2) -> bool:
+    """
+    Compare the lengths of two dictionaries or 
+    lists to check if they have the same number of items.
 
-def compare_dicts(dict1, dict2, raise_error=False):
+    Args:
+        iter1 (dict): The first iterable to compare.
+        iter2 (dict): The second iterable to compare.
+
+    Returns:
+        bool: True if the iterables have the same length, False otherwise.
+
+    Raises:
+        ValueError: If the iterables do not have the same number of items.
+    """
+    if len(iter1) == len(iter2):
+        return True
+    output_error = "".join([
+            f"The { "dictionaries" if isinstance(iter1, dict) else 'lists' }",
+            " do not have the same number of keys.\n",
+            f"{iter1.keys()} != {iter2.keys()}"
+    ])
+    raise ValueError(output_error)
+
+def compare_lists(list1, list2) -> bool:
+    """
+    Compare two lists to check if they have the same items
+    in any order.
+
+    Args:
+        list1 (list): The first list to compare.
+        list2 (list): The second list to compare.
+
+    Returns:
+        bool: True if the lists have the same items, False otherwise.
+    
+    Raises:
+        ValueError: If the lists do not have the same items
+    """
+    assert_equal_length(list1, list2)
+    # The order of the items in the list does not matter
+    if all(item in list2 for item in list1):
+        return True
+    output_error = "".join([
+        "The lists do not have the same items.\n",
+        f"{list1} != {list2}"
+    ])
+    raise ValueError(output_error)
+
+
+def assert_equal_dicts(dict1, dict2) -> bool:
     """
     Compare two dictionaries to check if they have the same key-value pairs.
 
@@ -24,52 +73,44 @@ def compare_dicts(dict1, dict2, raise_error=False):
 
     Returns:
         bool: True if the dictionaries have the same key-value pairs, False otherwise.
+    
+    Raises:
+        ValueError: If the dictionaries do not have the same key-value pairs.
+
     """
-    if len(dict1) != len(dict2):
-        if raise_error:
-            output_error = "".join([
-                "The dictionaries do not have the same number of keys.\n",
-                f"{dict1.keys()} != {dict2.keys()}"
-            ])
-            raise ValueError(output_error)
-        return False
+    assert_equal_length(dict1, dict2)
+
     for key, value in dict1.items():
         if isinstance(value, dict):
-            if not compare_dicts(value, dict2[key]):
-                if raise_error:
-                    output_error = "".join([
-                        f"Value for key {key} does not match.\n",
-                        f"{value} != {dict2[key]}"
-                    ])
-                    raise ValueError(output_error)
-                return False
+            if not assert_equal_dicts(value, dict2[key]):
+                output_error = "".join([
+                    f"Value for key {key} does not match.\n",
+                    f"{value} != {dict2[key]}"
+                ])
+                raise ValueError(output_error)
+
         elif isinstance(value, list):
             if len(value) != len(dict2[key]):
-                if raise_error:
-                    output_error = "".join([
-                        "The lists do not have the same number of items.\n",
-                        f"{value} != {dict2[key]}"
-                    ])
-                    raise ValueError(output_error)
-                return False
+                output_error = "".join([
+                    "The lists do not have the same number of items.\n",
+                    f"{value} != {dict2[key]}"
+                ])
+                raise ValueError(output_error)
+
             # The order of the items in the list does not matter
             if not all(item in dict2[key] for item in value):
-                if raise_error:
-                    output_error = "".join([
-                        "The lists do not have the same items.\n",
-                        f"{value} != {dict2[key]}"
-                    ])
-                    raise ValueError(output_error)
-                return False
+                output_error = "".join([
+                    "The lists do not have the same items.\n",
+                    f"{value} != {dict2[key]}"
+                ])
+                raise ValueError(output_error)
         else:
             if value != dict2[key]:
-                if raise_error:
-                    output_error = "".join([
-                        f"Value for key {key} does not match.\n",
-                        f"{value} != {dict2[key]}"
-                    ])
-                    raise ValueError(output_error)
-                return False
+                output_error = "".join([
+                    f"Value for key {key} does not match.\n",
+                    f"{value} != {dict2[key]}"
+                ])
+                raise ValueError(output_error)
     return True
 
 
@@ -227,7 +268,7 @@ class TestLoadConfig(unittest.TestCase):
         os.remove(config_file)
         os.remove(template_file0)
         os.remove(template_file1)
-        self.assertTrue(compare_dicts(actual_config, expected_config))
+        self.assertTrue(assert_equal_dicts(actual_config, expected_config))
 
     def test_load_config_with_template_overwrite_false(self):
         template_file0 = 'template0.yml'
@@ -277,7 +318,7 @@ class TestLoadConfig(unittest.TestCase):
         os.remove(config_file)
         os.remove(template_file0)
         os.remove(template_file1)
-        self.assertTrue(compare_dicts(actual_config, expected_config))
+        self.assertTrue(assert_equal_dicts(actual_config, expected_config))
 
 
 class TestRenderTemplate(unittest.TestCase):
@@ -332,7 +373,7 @@ class TestDeepMergeDicts(unittest.TestCase):
             'key5': 'value6'
         }
         actual_merged = deep_merge_dicts(source, destination)
-        self.assertTrue(compare_dicts(actual_merged, expected_merged))
+        self.assertTrue(assert_equal_dicts(actual_merged, expected_merged))
 
     def test_deep_merge_dicts_with_conflicts(self):
         source = {
@@ -352,7 +393,7 @@ class TestDeepMergeDicts(unittest.TestCase):
             'key3': 'value6'
         }
         actual_merged = deep_merge_dicts(source, destination)
-        self.assertTrue(compare_dicts(actual_merged, expected_merged))
+        self.assertTrue(assert_equal_dicts(actual_merged, expected_merged))
 
     def test_deep_merge_dicts_with_nested_dicts(self):
         source = {
@@ -376,7 +417,7 @@ class TestDeepMergeDicts(unittest.TestCase):
             'key2': 'value3'
         }
         actual_merged = deep_merge_dicts(source, destination)
-        self.assertTrue(compare_dicts(actual_merged, expected_merged))
+        self.assertTrue(assert_equal_dicts(actual_merged, expected_merged))
 
     def test_deep_merge_dicts_with_dict_list(self):
         source = {
@@ -404,7 +445,7 @@ class TestDeepMergeDicts(unittest.TestCase):
             'key2': 'value3'
         }
         actual_merged = deep_merge_dicts(source, destination)
-        self.assertTrue(compare_dicts(actual_merged, expected_merged))
+        self.assertTrue(assert_equal_dicts(actual_merged, expected_merged))
 
     def test_deep_merge_dicts_with_list(self):
         source = {
@@ -422,7 +463,7 @@ class TestDeepMergeDicts(unittest.TestCase):
             'key2': 'value2'
         }
         actual_merged = deep_merge_dicts(source, destination)
-        self.assertTrue(compare_dicts(actual_merged, expected_merged))
+        self.assertTrue(assert_equal_dicts(actual_merged, expected_merged))
 
     def test_deep_merge_dicts_with_incompatible_types(self):
         source = {
@@ -453,7 +494,7 @@ class TestDeepMergeDicts(unittest.TestCase):
         }
 
         actual_merged = deep_merge_dicts(source, destination, overwrite=True)
-        self.assertTrue(compare_dicts(actual_merged, expected_merged))
+        self.assertTrue(assert_equal_dicts(actual_merged, expected_merged))
 
 
 class TestValidateTemplate(unittest.TestCase):
