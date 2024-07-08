@@ -6,7 +6,8 @@ import os
 import argparse
 
 from src.templates import load_config
-from src.renderization import render, load_schema
+from src.rendering import render, load_schema
+from src.validation import validate_config
 
 def get_startup_configurations() -> argparse.Namespace:
     """
@@ -63,6 +64,7 @@ def main() -> None:
     args = get_startup_configurations()
     config = load_config(args.input_file)
     schema = load_schema(args.schema_file)
+    validate_config(config, schema)
     rendered_config = render(config, schema)
 
     if args.output_file == 'stdout':
