@@ -1,4 +1,4 @@
-name: Unit tests to ensure only valid code is pushed
+name: Tests
 
 on: [push]
 
