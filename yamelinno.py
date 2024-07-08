@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 This module contains the main function for rendering a configuration
 using a schema and printing the rendered configuration.
