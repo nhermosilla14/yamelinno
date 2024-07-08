@@ -1,6 +1,6 @@
 # yamelinno
 A tool to render yaml into InnoSetup iss files.
-
+[![Tests](https://github.com/nhermosilla14/yamelinno/actions/workflows/unittest.yml/badge.svg?branch=main)](https://github.com/nhermosilla14/yamelinno/actions/workflows/unittest.yml)
 # Why?
 I wanted to have a way to define my InnoSetup scripts in a more structured, reusable way, and I like yaml. I also happen to dislike a lot the InnoSetup scripting language, so I wanted to avoid it as much as possible. This tool is the result of that.
 
