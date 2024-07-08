@@ -2,6 +2,8 @@
 import unittest
 import os
 
+import yaml
+
 from src.rendering import (
     load_schema,
     render_value,
@@ -312,9 +314,6 @@ class RenderSectionTestCase(unittest.TestCase):
 
 
     def test_render_section_with_raw_code(self):
-        # if yaml is not imported, do it
-        if 'yaml' not in globals():
-            import yaml #pylint: disable=import-outside-toplevel
         section_yml = "".join([
             "raw: |\n",
             "  function main() {\n",
