@@ -35,15 +35,11 @@ jobs:
         source: coverage.json
         output: coverage/badges.svg
         jsonPath: totals.percent_covered_display
-    
-    - name: Build root web directory structure
-      if: github.ref == 'refs/heads/main'
-      run: mkdir public && mv coverage public/
       
     - name: Deploy coverage badge and site
       uses: peaceiris/actions-gh-pages@v4
       if: github.ref == 'refs/heads/main'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./public
+        publish_dir: ./coverage
         #keep_files: true
