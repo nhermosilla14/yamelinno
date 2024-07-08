@@ -45,7 +45,7 @@ def load_config(config_file) -> dict:
         return merged_config
 
 
-def render_template(src_template, input_args={}) -> str:
+def render_template(src_template, input_args=None) -> str:
     """
     Render a template with the provided input arguments.
     It works by replacing the placeholders in the template,
@@ -61,15 +61,16 @@ def render_template(src_template, input_args={}) -> str:
         str: The rendered template as a string.
     # TODO: Add support for !! escaping in the template
     """
-    for key, value in input_args.items():
-        if "!" + key in src_template:
-            src_template = src_template.replace("!" + key, str(value))
-        else:
-            raise KeyError(f"Input argument {key} not found in template")
+    if input_args is not None:
+        for key, value in input_args.items():
+            if "!" + key in src_template:
+                src_template = src_template.replace("!" + key, str(value))
+            else:
+                raise KeyError(f"Input argument {key} not found in template")
     return src_template
 
 
-def load_template(template_file, input_args={}) -> dict:
+def load_template(template_file, input_args=None) -> dict:
     """
     Load a template file with or without children templates.
     If a template has children templates, they are loaded recursively.
@@ -86,7 +87,7 @@ def load_template(template_file, input_args={}) -> dict:
     """
     with open(template_file, 'r', encoding='utf-8') as file:
         # Apply input arguments to the template
-        src_template = file.read()        
+        src_template = file.read()
         template = yaml.load(render_template(src_template, input_args), Loader=yaml.FullLoader)
         # Validate the template
         validate_template(template)
@@ -95,7 +96,6 @@ def load_template(template_file, input_args={}) -> dict:
             # This is a leaf template
             return template
         # This is a parent template
-        template_queue = []
         merged_template = {}
         for t in template['templates']:
             # Compatibility with old templates
@@ -105,7 +105,8 @@ def load_template(template_file, input_args={}) -> dict:
                 raise KeyError("Template path not specified")
             template_args = t.get('inputs', {})
             overwrite_destination = t.get('overwrite', False)
-            merged_template = deep_merge_dicts(load_template(t['path'], template_args), merged_template)
+            merged_template = deep_merge_dicts(
+                load_template(t['path'], template_args), merged_template)
         template.pop('templates', None)
         merged_template = deep_merge_dicts(template, merged_template, overwrite_destination)
         return merged_template
