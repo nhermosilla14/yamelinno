@@ -73,13 +73,13 @@ class RenderValueTestCase(unittest.TestCase):
         expected_output = 'value1 value2'
         rendered_value = render_value(value)
         self.assertEqual(rendered_value, expected_output)
-    
+
     def test_render_value_bool(self):
         value = True
         expected_output = 'yes'
         rendered_value = render_value(value)
         self.assertEqual(rendered_value, expected_output)
-    
+
     def test_render_value_other(self):
         value = 42
         expected_output = '42'

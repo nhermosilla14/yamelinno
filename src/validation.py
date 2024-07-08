@@ -112,7 +112,12 @@ def validate_key_types(key_types, keys_dict) -> None:
     for key, key_type, required in key_types:
         if key not in keys_dict:
             if required:
-                raise KeyError(f"Required key '{key}' missing.\nkeys_dict: {keys_dict}\nkey_types: {key_types}")
+                output_error = "".join([
+                    f"Required key '{key}' missing.\n",
+                    f"keys_dict: {keys_dict}\n",
+                    f"key_types: {key_types}"
+                ])
+                raise KeyError(output_error)
         if key_type is None:
             # No type specified, so we can't validate
             continue
