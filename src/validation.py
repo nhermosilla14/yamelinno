@@ -78,69 +78,53 @@ def get_required_sections(schema) -> list:
     return required_sections
 
 
-def get_required_keys(section_definition, entry=False) -> list:
+def get_key_types(key_definition) -> list:
     """
-    Get a list of required keys from a section definition or entry.
-    Each key is retrieved along with its type, and returned as a tuple.
+    Get the types of keys from a key or entry definition.
     
     Args:
-        section_definition (dict): The section definition to get the required keys from.
-        entry (bool): Whether the section is an entry or not.
-
+        key_definition (dict): The definition of the keys.
+    
     Returns:
-        list: A list of required key-type tuples.
+        list: A list of tuples in the form (key, type, required).
     """
-    required_keys = []
-    target_dict = section_definition['keys']\
-        if not entry else section_definition['entry']
-    for key, value in target_dict.items():
-        if value.get('required', False):
-            # Check if the key has a type defined
-            key_type = get_python_type(value.get('type', None))
-            required_keys.append((key, key_type))
-    return required_keys
+    key_types = []
+    for key, value in key_definition.items():
+        if 'type' not in value:
+            key_type = None
+        else:
+            key_type = get_python_type(value['type'])
+        key_types.append((key, key_type, value.get('required', False)))
+    return key_types
 
 
-def validate_key_types(key_types, keys_dict, required=False) -> None:
+def validate_key_types(key_types, keys_dict) -> None:
     """
     Validate the types of keys in a section or entry.
     
     Args:
-        key_types (list): A list of key-type tuples.
+        key_types (list): A list of tuples in the form (key, type, required).
         keys_dict (dict): The section or entry to validate.
     
     Raises:
         TypeError: If a key is of the wrong type.
     """
-    for key, key_type in key_types:
+    for key, key_type, required in key_types:
         if key not in keys_dict:
             if required:
-                raise KeyError(f"Required key '{key}' missing")    
+                raise KeyError(f"Required key '{key}' missing.\nkeys_dict: {keys_dict}\nkey_types: {key_types}")
+        if key_type is None:
+            # No type specified, so we can't validate
+            continue
         if not isinstance(keys_dict[key], key_type):
             raise TypeError(f"Key '{key}' must be of type {key_type}")
+    # Now check the other way around
+    for key in keys_dict:
+        if key not in [k for k, _, _ in key_types]:
+            raise KeyError(f"Key '{key}' not found in schema")
 
 
-def get_remaining_key_types(reference_key_schema, verified_keys) -> list:
-    """
-    Get a list of key-types tuples for the remaining keys in a section
-    or entry.
-
-    Args:
-        reference_key_schema (dict): The schema of the keys.
-        verified_keys (list): The keys that have already been verified.
-    
-    Returns:
-        list: A list of key-type tuples for the remaining keys.
-    """
-    remaining_keys = set(reference_key_schema.keys()) - set(verified_keys)
-    remaining_types = [
-        get_python_type(reference_key_schema[key].get('type', None)
-        ) for key in remaining_keys
-    ]
-    return list(zip(remaining_keys, remaining_types))
-
-
-def validate_keys(section, section_definition, entry=False) -> None:
+def validate_keys(keys_dict, section_definition, entry=False) -> None:
     """
     Validate the keys of a section or entry against its definition.
     
@@ -154,13 +138,9 @@ def validate_keys(section, section_definition, entry=False) -> None:
         KeyError: If a required key is missing.
         TypeError: If a key is of the wrong type.
     """
-    # Validate required keys
-    required_keys = get_required_keys(section_definition, entry=entry)
-    validate_key_types(required_keys, section, required=True)
-    # Validate other keys
-    remaining_key_types = get_remaining_key_types(
-        section_definition['keys'], [key for key, _ in required_keys])
-    validate_key_types(remaining_key_types, section)
+    section_def = section_definition['keys'] if not entry else section_definition['entry']
+    key_types = get_key_types(section_def)
+    validate_key_types(key_types, keys_dict)
 
 
 def validate_section(section, section_definition) -> None:
@@ -189,11 +169,30 @@ def validate_section(section, section_definition) -> None:
         # Validate required raw field
         if section_definition.get('required', False):
             if 'raw' not in section:
-                raise KeyError(
-                    f"Required raw field missing in section {section_definition['name']}"
-                )
+                raise KeyError("Required raw field missing")
         if 'raw' in section:
             if not isinstance(section['raw'], str):
-                raise TypeError(
-                    f"Raw field must be a string in section {section_definition['name']}"
-                )
+                raise TypeError("Raw field must be a string")
+
+def validate_config(config, schema) -> None:
+    """
+    Validate a configuration against a schema.
+    
+    Args:
+        config (dict): The configuration to validate.
+        schema (dict): The schema to validate against.
+    
+    Raises:
+        KeyError: If a required section is missing.
+        KeyError: If a required key is missing.
+        KeyError: If a required entry key is missing.
+        TypeError: If a key is of the wrong type.
+    """
+    # Validate if the required sections are present
+    required_sections = get_required_sections(schema)
+    for section_name in required_sections:
+        if section_name not in config:
+            raise KeyError(f"Required section '{section_name}' missing")
+    # Validate section content
+    for section_name, section in config.items():
+        validate_section(section, schema[section_name])
