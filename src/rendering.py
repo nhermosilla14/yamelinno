@@ -1,37 +1,6 @@
 """
 This module is used to render the config file, from yaml to the
-iss format. The iss format is expressed in yaml using the following
-schema:     
-
-```
-sectionName:
-    rendered_name: "SectionName"
-    children: "keys" | "entries"
-    # If children is "keys", the section is a list of key-value pairs
-    keys:
-        keyName:
-            rendered_name: "KeyName"
-            required: true | false
-    # If children is "entries", the section is a list of entries, each
-    # one a list of key-value pairs itself
-    entry:
-        keyName:
-            rendered_name: "KeyName"
-            required: true | false
-```
-
-This is rendered to the following format:
-
-```
-[SectionName]
-# If children is "keys"
-KeyName: value;
-
-[AnyOtherSection]
-# If children is "entries"
-KeyName: value; KeyName2: value2;
-```
-
+iss format. The iss format is expressed in yaml.
 """
 
 import yaml
@@ -55,35 +24,41 @@ def load_schema(schema_file) -> dict:
         return schema
 
 
-def render_value(value) -> str:
+def render_value(value, target_type=None) -> str:
     """
     Render a value to a string following the iss format.
     For example: 
     - A list of values should be rendered as space-separated values.
-    - A string should be rendered as is (with quotes).
-    - A number should be rendered as a string.
+    - A string should be rendered as is (with quotes, for extra safety).
+    - A number should be rendered as a string (without quotes).
     - A boolean should be rendered as "yes" or "no" (without quotes)
     - A double-quote should be rendered as two double-quotes.
 
     Args:
         value: The value to be rendered.
+        target_type: The target type of the value. If provided, the value
+        will be converted to this type before rendering. This is currently
+        not used, but is provided in order to support more complex types
+        in the future, such as UUID, dates, URLs, etc.
 
     Returns:
         str: The rendered value as a string.
     """
+    if target_type:
+        print(f"Target type specifying is not supported yet. Value: {value}")
     if isinstance(value, list):
         # If the value is a list, render it as space-separated values
         return " ".join(value)
-    elif isinstance(value, str):
+    if isinstance(value, str):
         # If the value is a string, render it with quotes
         # and escape any double-quotes
         return f'"{value.replace("\"", "\"\"")}"'
-    elif isinstance(value, bool):
+    if isinstance(value, bool):
         # If the value is a boolean, render it as "yes" or "no"
         return "yes" if value else "no"
-    else:
-        # If the value is anything else, render it as a string
-        return str(value)
+
+    # If the value is anything else, render it as a string
+    return str(value)
 
 
 def render_key(key, value, section_definition) -> str:
@@ -97,21 +72,15 @@ def render_key(key, value, section_definition) -> str:
 
     Returns:
         str: The rendered key-value pair in the format <rendered_name>=<value>.
-
-    Raises:
-        Exception: If the key is not found in the section definition.
     """
-
-    if key not in section_definition['keys']:
-        raise KeyError(f"Key '{key}' not found in section definition")
-
     key_definition = section_definition['keys'][key]
 
     # Render the key
     # Every key has a 'renderedName' field, which must be used as:
-    # <renderedName>=<value>
+    # <renderedName>=<value>\
     rendered_name = key_definition['renderedName']
-    return f"{rendered_name}={value}"
+    return f"{rendered_name}={render_value(value)}"
+
 
 def render_entry(entry, section_definition) -> str:
     """
@@ -146,13 +115,7 @@ def render_entry(entry, section_definition) -> str:
         rendered_entry = ""
         for key, value in entry.items():
             rendered_name = section_definition['entry'][key]['renderedName']
-            if isinstance(value, list):
-                # If the value is a list, we need to render it as space-separated values
-                rendered_entry += f"{rendered_name}:"
-                for v in value:
-                    rendered_entry += f" {v}"
-            else:
-                rendered_entry += f"{rendered_name}: {value}"
+            rendered_entry += f"{rendered_name}: {render_value(value)}"
             rendered_entry += "; "
         rendered_entry = rendered_entry[:-2]  # Remove the last space and semicolon
         return rendered_entry
