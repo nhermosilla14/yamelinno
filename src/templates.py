@@ -4,10 +4,44 @@ to generate the initial yaml file. The templates are
 merged in order, and the values from the last template
 are used if there are conflicts.
 """
+import os
 
 import yaml
 
-def load_config(config_file) -> dict:
+def search_template(template, directories=None):
+    """
+    Search for a template in a list of directories.
+    Args:
+        template (str): The path to the template file.
+
+    Returns:
+        str: The path to the template file.
+
+    Raises:
+        FileNotFoundError: If the template is not found.
+    """
+    # First check if the template is a full path or relative
+    # to the current directory
+    if os.path.exists(template):
+        return template
+    # If the YAMELINNO_TEMPLATES environment variable is set,
+    # verify if its a list of directories separated by a colon
+    if 'YAMELINNO_TEMPLATES' in os.environ:
+        env_directories = os.environ['YAMELINNO_TEMPLATES'].split(':')
+        # Add the provided directories to the list
+        if directories is not None:
+            env_directories.extend(directories)
+        # Check if the directories are valid
+        for directory in env_directories:
+            if not os.path.isdir(directory):
+                raise FileNotFoundError(f"Directory {directory} not found")
+            template_path = os.path.join(directory, template)
+            if os.path.exists(template_path):
+                return template_path
+    raise FileNotFoundError(f"Template {template} not found")
+
+
+def load_config(config_file, as_template=False, input_args=None) -> dict:
     """
     Load a config file with or without templates.
     If a template has children templates, they are loaded recursively.
@@ -16,17 +50,23 @@ def load_config(config_file) -> dict:
         config_file (str): The path to the config file.
         overwrite (bool): Whether to overwrite values from templates, instead of
             merging them. Default is False.
+        as_template (bool): Whether to treat the config file as a template or not.
 
     Returns:
         list: The loaded config as a dict.
 
     """
     with open(config_file, 'r', encoding='utf-8') as file:
-        config = yaml.load(file, Loader=yaml.FullLoader)
+        file_content = file.read()
+        if as_template:
+            file_content = render_template(file_content, input_args)
+        config = yaml.load(file_content, Loader=yaml.FullLoader)
+        if as_template:
+            validate_template(config)
         # Parse the templates
         if 'templates' not in config:
             # This is a simple config file
-            # with no templates
+            # with no referenced templates
             return config
         # There are templates to parse
         merged_config = {}
@@ -61,12 +101,17 @@ def render_template(src_template, input_args=None) -> str:
         str: The rendered template as a string.
     # TODO: Add support for !! escaping in the template
     """
-    if input_args is not None:
-        for key, value in input_args.items():
-            if "!" + key in src_template:
-                src_template = src_template.replace("!" + key, str(value))
-            else:
-                raise KeyError(f"Input argument {key} not found in template")
+    if input_args is None:
+        return src_template
+
+    assert isinstance(input_args, (dict, type(None))),\
+        f"Input arguments must be a dictionary. Got: {input_args}"
+
+    for key, value in input_args.items():
+        if "!" + key in src_template:
+            src_template = src_template.replace("!" + key, str(value))
+        else:
+            raise KeyError(f"Input argument {key} not found in template")
     return src_template
 
 
@@ -85,31 +130,7 @@ def load_template(template_file, input_args=None) -> dict:
         list: The loaded template as a dict.
 
     """
-    with open(template_file, 'r', encoding='utf-8') as file:
-        # Apply input arguments to the template
-        src_template = file.read()
-        template = yaml.load(render_template(src_template, input_args), Loader=yaml.FullLoader)
-        # Validate the template
-        validate_template(template)
-        # Parse the template
-        if 'templates' not in template:
-            # This is a leaf template
-            return template
-        # This is a parent template
-        merged_template = {}
-        for t in template['templates']:
-            # Compatibility with old templates
-            if isinstance(t, str):
-                t = {'path': t, 'inputs': {}}
-            if 'path' not in t:
-                raise KeyError("Template path not specified")
-            template_args = t.get('inputs', {})
-            overwrite_destination = t.get('overwrite', False)
-            merged_template = deep_merge_dicts(
-                load_template(t['path'], template_args), merged_template)
-        template.pop('templates', None)
-        merged_template = deep_merge_dicts(template, merged_template, overwrite_destination)
-        return merged_template
+    return load_config(template_file, as_template=True, input_args=input_args)
 
 
 def deep_merge_dicts(source: dict, destination: dict, overwrite: bool = False) -> dict:

@@ -7,6 +7,7 @@ import unittest
 import os
 
 from src.templates import (
+    search_template,
     load_config,
     render_template,
     deep_merge_dicts,
@@ -167,6 +168,47 @@ class TestAuxiliaryFunctions(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             assert_equal_dicts(dict1, dict2)
+
+class TestSearchTemplate(unittest.TestCase):
+    def test_search_template_leaf_template(self):
+        template_file = 'leaf_template.yaml'
+        with open(template_file, 'w', encoding='utf-8') as file:
+            file.write('key0: value1\nkey1: value2\nkey2: value3\n')
+        
+        expected_path = template_file
+        actual_path = search_template(template_file)
+        # Clean up
+        os.remove(template_file)
+        self.assertEqual(actual_path, expected_path)
+
+    def test_search_template_same_dir_as_template(self):
+        template_file = 'leaf_template.yaml'
+        # Create a tmp directory
+        os.mkdir('tmp')
+        with open(f'tmp/{template_file}', 'w', encoding='utf-8') as file:
+            file.write('key0: value1\nkey1: value2\nkey2: value3\n')
+        
+        expected_path = f'tmp/{template_file}'
+        actual_path = search_template(template_file, ['tmp'])
+        # Clean up
+        os.remove(f'tmp/{template_file}')
+        os.rmdir('tmp')
+        self.assertEqual(actual_path, expected_path)
+
+    def test_search_template_env_var(self):
+        template_file = 'leaf_template.yaml'
+        # Create a tmp directory
+        os.mkdir('tmp')
+        with open(f'tmp/{template_file}', 'w', encoding='utf-8') as file:
+            file.write('key0: value1\nkey1: value2\nkey2: value3\n')
+        
+        os.environ['YAMELINNO_TEMPLATES'] = 'tmp'
+        expected_path = f'tmp/{template_file}'
+        actual_path = search_template(template_file)
+        # Clean up
+        os.remove(f'tmp/{template_file}')
+        os.rmdir('tmp')
+        self.assertEqual(actual_path, expected_path)
 
 
 class TestLoadConfig(unittest.TestCase):
