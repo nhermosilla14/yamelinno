@@ -27,6 +27,9 @@ jobs:
         source: coverage.json
         output: coverage/badges.svg
         jsonPath: totals.percent_covered_display
+
+    - name: Copy coverage.json to output dir
+      run: cp coverage.json coverage/
       
     - name: Deploy coverage badge and site
       uses: peaceiris/actions-gh-pages@v4
