@@ -48,6 +48,34 @@ class TestValidationValidateDictKeys(unittest.TestCase):
         with self.assertRaises(TypeError):
             validate_dict_keys(dict_value)
 
+    def test_validate_dict_keys_nested(self):
+        dict_value = {
+            'key0': 'value0',
+            'key1': {
+                'key2': 'value2',
+                'key3': 'value3',
+            }
+        }
+        # This should not raise an exception
+        validate_dict_keys(dict_value)
+
+    def test_validate_dict_keys_with_list(self):
+        dict_value = {
+            'key0': 'value0',
+            'key1': ['value1', 'value2'],
+        }
+        # This should not raise an exception
+        validate_dict_keys(dict_value)
+
+    def test_validate_dict_keys_invalid_value(self):
+        dict_value = {
+            'key0': 'value0',
+            'key1': 1,
+            'key2': None
+        }
+        with self.assertRaises(TypeError):
+            validate_dict_keys(dict_value)
+
 class TestValidationGetRequiredSections(unittest.TestCase):
     def test_get_required_sections(self):
         schema = {
@@ -348,6 +376,14 @@ class TestValidationValidateSection(unittest.TestCase):
         with self.assertRaises(TypeError):
             validate_section(section, section_definition)
 
+    def test_validate_section_missing_required_raw(self):
+        section = {}
+        section_definition = {
+            'children': 'raw',
+            'required': True
+        }
+        with self.assertRaises(KeyError):
+            validate_section(section, section_definition)
 
 class TestValidationValidateConfig(unittest.TestCase):
     def test_validate_config(self):
