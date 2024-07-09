@@ -13,7 +13,7 @@ jobs:
       run: pip install pyyaml coverage
       
     - name: Run tests
-      run: python -m coverage run -m unittest discover -s tests
+      run: python -m coverage run --source=. -m unittest discover -s tests
 
     - name: Generate coverage json report
       if: github.ref == 'refs/heads/main'
