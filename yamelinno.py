@@ -10,7 +10,7 @@ from src.templates import load_config
 from src.rendering import render, load_schema
 from src.validation import validate_config
 
-def get_startup_configurations() -> argparse.Namespace:
+def get_startup_configurations(argv=None) -> argparse.Namespace:
     """
     Retrieves the startup configurations from the command line arguments.
 
@@ -38,7 +38,7 @@ def get_startup_configurations() -> argparse.Namespace:
         action='version',
         version='yamelinno 1.0',
         help='Display the version of the tool.')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Check if the input file exists
     if not os.path.exists(args.input_file):
@@ -56,13 +56,13 @@ def get_startup_configurations() -> argparse.Namespace:
     return args
 
 
-def main() -> None:
+def main(argv=None) -> None:
     """
     Main function that loads the configuration and schema files,
     renders the configuration using the schema, and prints the
     rendered configuration.
     """
-    args = get_startup_configurations()
+    args = get_startup_configurations(argv)
     config = load_config(args.input_file)
     schema = load_schema(args.schema_file)
     validate_config(config, schema)
