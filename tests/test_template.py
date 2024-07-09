@@ -31,10 +31,15 @@ def assert_equal_length(iter1, iter2) -> bool:
     if len(iter1) == len(iter2):
         return True
     iter_type = "dictionaries" if isinstance(iter1, dict) else 'lists'
+    if iter_type == 'lists':
+        diff_msg = f"{iter1} != {iter2}"
+    else:
+        diff_msg = f"{iter1.keys()} != {iter2.keys()}"
+
     output_error = "".join([
             f"The {iter_type}",
             " do not have the same number of keys.\n",
-            f"{iter1.keys()} != {iter2.keys()}"
+            diff_msg
     ])
     raise ValueError(output_error)
 
@@ -113,6 +118,55 @@ def assert_equal_dicts(dict1, dict2) -> bool:
                 ])
                 raise ValueError(output_error)
     return True
+
+class TestAuxiliaryFunctions(unittest.TestCase):
+    def test_assert_equal_length_true(self):
+        dict1 = {'key0': 'value1', 'key1': 'value2'}
+        dict2 = {'key0': 'value1', 'key1': 'value2'}
+
+        self.assertTrue(assert_equal_length(dict1, dict2))
+
+    def test_assert_equal_length_false(self):
+        dict1 = {'key0': 'value1', 'key1': 'value2'}
+        dict2 = {'key0': 'value1', 'key1': 'value2',
+                    'key2': 'value3'}
+
+        with self.assertRaises(ValueError):
+            assert_equal_length(dict1, dict2)
+
+    def test_compare_lists_true(self):
+        list1 = ['item0', 'item1', 'item2']
+        list2 = ['item2', 'item1', 'item0']
+
+        self.assertTrue(compare_lists(list1, list2))
+
+    def test_compare_lists_diff_items(self):
+        list1 = ['item0', 'item1', 'item2']
+        list2 = ['item2', 'item1', 'item3']
+
+        with self.assertRaises(ValueError):
+            compare_lists(list1, list2)
+
+    def test_compare_lists_diff_length(self):
+        list1 = ['item0', 'item1', 'item2']
+        list2 = ['item2', 'item1']
+
+        with self.assertRaises(ValueError):
+            compare_lists(list1, list2)
+
+
+    def test_assert_equal_dicts_true(self):
+        dict1 = {'key0': 'value1', 'key1': 'value2'}
+        dict2 = {'key1': 'value2', 'key0': 'value1'}
+
+        self.assertTrue(assert_equal_dicts(dict1, dict2))
+
+    def test_assert_equal_dicts_false(self):
+        dict1 = {'key0': 'value1', 'key1': 'value2'}
+        dict2 = {'key1': 'value2', 'key0': 'value3'}
+
+        with self.assertRaises(ValueError):
+            assert_equal_dicts(dict1, dict2)
 
 
 class TestLoadConfig(unittest.TestCase):
