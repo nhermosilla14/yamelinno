@@ -33,10 +33,10 @@ def load_config(config_file) -> dict:
         for t in config['templates']:
             # Compatibility with old templates
             if isinstance(t, str):
-                t = {'path': t, 'inputs': {}}
+                t = {'path': t, 'inputs': None}
             if 'path' not in t:
                 raise KeyError("Template path not specified")
-            template_args = t.get('inputs', {})
+            template_args = t.get('inputs', None)
             overwrite_destination = t.get('overwrite', False)
             template = load_template(t['path'], template_args)
             merged_config = deep_merge_dicts(template, merged_config, overwrite_destination)

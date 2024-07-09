@@ -246,6 +246,29 @@ class TestLoadConfig(unittest.TestCase):
         os.remove(template_file)
         self.assertEqual(actual_config, expected_config)
 
+    def test_load_config_without_template_args(self):
+        template_file = 'template_without_args.yml'
+        config_file = 'config_without_args.yml'
+        with open(template_file, 'w', encoding='utf-8') as file:
+            file.write("".join([
+                'key0: value1\n',
+                'key1: value2\n'
+                ])
+            )
+
+        with open(config_file, 'w', encoding='utf-8') as file:
+            file.write(f'templates:\n  - {template_file}\n')
+
+        expected_config = {
+            'key0': 'value1',
+            'key1': 'value2'
+        }
+        actual_config = load_config(config_file)
+        # Clean up
+        os.remove(config_file)
+        os.remove(template_file)
+        self.assertEqual(actual_config, expected_config)
+
     def test_load_config_with_repeated_template_args(self):
         template_file = 'template_with_args.yml'
         config_file = 'config_with_args.yml'
@@ -406,6 +429,46 @@ class TestRenderTemplate(unittest.TestCase):
         actual_rendered = render_template(src_template, input_args)
         self.assertEqual(actual_rendered, expected_rendered)
 
+    def test_render_template_with_missing_args(self):
+        src_template = "".join([
+            'key0: value1\n',
+            'key1: value2\n',
+            'key2: !key3\n',
+        ])
+        input_args = {'key4': 'value4'}
+        with self.assertRaises(KeyError):
+            render_template(src_template, input_args)
+
+    def test_render_template_without_its_args(self):
+        src_template = "".join([
+            'key0: value1\n',
+            'key1: value2\n',
+            'key2: !key3\n',
+        ])
+        expected_rendered = "".join([
+            'key0: value1\n',
+            'key1: value2\n',
+            'key2: !key3\n',
+        ])
+
+        actual_rendered = render_template(src_template)
+        self.assertEqual(actual_rendered, expected_rendered)
+
+    def test_render_template_without_args_brief(self):
+        src_template = "".join([
+            'key0: value1\n',
+            'key1: value2\n',
+            'key2: value3\n',
+        ])
+
+        expected_rendered = "".join([
+            'key0: value1\n',
+            'key1: value2\n',
+            'key2: value3\n',
+        ])
+        actual_rendered = render_template(src_template, None)
+
+        self.assertEqual(actual_rendered, expected_rendered)
 
 class TestDeepMergeDicts(unittest.TestCase):
     def test_deep_merge_dicts_no_conflicts(self):
