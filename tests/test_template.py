@@ -30,8 +30,9 @@ def assert_equal_length(iter1, iter2) -> bool:
     """
     if len(iter1) == len(iter2):
         return True
+    iter_type = "dictionaries" if isinstance(iter1, dict) else 'lists'
     output_error = "".join([
-            f"The { "dictionaries" if isinstance(iter1, dict) else 'lists' }",
+            f"The {iter_type}",
             " do not have the same number of keys.\n",
             f"{iter1.keys()} != {iter2.keys()}"
     ])
