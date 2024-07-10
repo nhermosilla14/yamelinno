@@ -68,7 +68,7 @@ jobs:
         uses: redhat-actions/push-to-registry@v2
         with:
           image: ${{ steps.build_image.outputs.image }}
-          tags: latest ${{ steps.semver.outputs.semver }} ${{ steps.short_semver.outputs.short_semver }}
+          tags: latest "${{ steps.semver.outputs.semver }}" "${{ steps.short_semver.outputs.short_semver }}"
           registry: ${{ env.IMAGE_REGISTRY }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
