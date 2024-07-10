@@ -1,5 +1,11 @@
 # yamelinno
-[![Pylint](https://github.com/nhermosilla14/yamelinno/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/nhermosilla14/yamelinno/actions/workflows/pylint.yml) [![Tests](https://github.com/nhermosilla14/yamelinno/actions/workflows/unittest.yml/badge.svg?branch=main)](https://github.com/nhermosilla14/yamelinno/actions/workflows/unittest.yml) ![Coverage](https://nhermosilla14.github.io/yamelinno/badges.svg) [![CodeQL](https://github.com/nhermosilla14/yamelinno/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/nhermosilla14/yamelinno/actions/workflows/github-code-scanning/codeql) [![Build and push container image](https://github.com/nhermosilla14/yamelinno/actions/workflows/container-publish.yml/badge.svg)](https://github.com/nhermosilla14/yamelinno/actions/workflows/container-publish.yml)
+[![Pylint](https://github.com/nhermosilla14/yamelinno/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/nhermosilla14/yamelinno/actions/workflows/pylint.yml) 
+[![Tests](https://github.com/nhermosilla14/yamelinno/actions/workflows/unittest.yml/badge.svg?branch=main)](https://github.com/nhermosilla14/yamelinno/actions/workflows/unittest.yml) 
+![Coverage](https://nhermosilla14.github.io/yamelinno/badges.svg)
+[![CodeQL](https://github.com/nhermosilla14/yamelinno/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/nhermosilla14/yamelinno/actions/workflows/github-code-scanning/codeql)
+[![Build and push container image](https://github.com/nhermosilla14/yamelinno/actions/workflows/container-publish.yml/badge.svg)](https://github.com/nhermosilla14/yamelinno/actions/workflows/container-publish.yml)
+[![tag badge](https://img.shields.io/github/v/tag/nhermosilla14/yamelinno)](https://github.com/nhermosilla14/yamelinno/tags)
+[![license badge](https://img.shields.io/github/license/nhermosilla14/yamelinno)](./LICENSE)
 
 A tool to render yaml into InnoSetup iss files.
 
