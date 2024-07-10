@@ -29,6 +29,7 @@ jobs:
         jsonPath: totals.percent_covered_display
 
     - name: Copy coverage.json to output dir
+      if: github.ref == 'refs/heads/main'
       run: cp coverage.json coverage/
       
     - name: Deploy coverage badge and site
