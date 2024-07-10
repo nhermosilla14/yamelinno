@@ -189,7 +189,8 @@ Some more things to add:
 - You can add the same template several times.
 - The order in which the templates are included is important. The templates are resolved in the order they are included, so the last template will (most likely) overwrite the values in the previous templates.
 - Templates are not validated against the schema, so you can include any yaml file as a template. This is useful when you want to include a snippet of code that is not part of the schema. The end result is validated against the schema, though.
-- As the input values are resolved by simple string replacement, some issues may arise if the input values contain special characters or if an input value is fully contained in another input value. This is a known issue and will be addressed in future versions. A simple example of this is shown below:
+- **IMPORTANT**: As the input values are resolved by simple string replacement, some issues may arise if the input values contain special characters or if an input value is fully contained in another input value. This is a known issue and will be addressed in future versions. A simple example of this is shown below:
+
 ```yaml
 # template.yml
 files:
@@ -270,6 +271,8 @@ Just like the templates, the schema is resolved in the following way:
 - [X] Support for templates that can be resolved at runtime, either by the tool or by the user.
 - [X] More InnoSetup directives in the base schema.
 - [ ] Support for snippets, which are reusable code blocks that can be included in the yaml file.
+- [ ] Add a wiki for better documentation, and to provide examples and tutorials.
+- [ ] Add a repository with templates and schemas that can be used as a starting point.
 - [ ] Support for brief syntax, which would allow the user to write the yaml file in a more concise way.
 - [ ] Enable usage as a library, so it can be integrated with other tools.
 - [ ] Port to Rust, because why not?
@@ -285,6 +288,15 @@ source .venv/bin/activate
 pip install -r requirements.txt
 python yamelinno.py input.yml -o output.iss
 ```
+
+You can also compile the script into an executable using `pyinstaller`. Just install `pyinstaller` and run the following command:
+
+```bash
+pyinstaller --onefile yamelinno.py
+```
+
+This will create an executable file in the `dist` directory. You can then run it as any other executable. This should work on Linux and Windows, but YMMV. 
+
 
 ## As a container
 You can use the provided container image to run the tool. Just pull the image and run it with the desired options. For example:
