@@ -20,7 +20,7 @@ def search_schema(schema_file) -> str:
     Raises:
         FileNotFoundError: If the schema file is not found.
     """
-    return search_input_file(schema_file, 'schema')
+    return search_input_file(input_file=schema_file, kind='schema')
 
 def load_schema(schema_file) -> dict:
     """

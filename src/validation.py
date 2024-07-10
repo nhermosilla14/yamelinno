@@ -66,11 +66,14 @@ def search_input_file(input_file: str, kind='schema', directories=None) -> str:
     # If the YAMELINNO_<kind> environment variable is set,
     # verify if its a list of directories separated by a colon
     if env_var in os.environ:
-        env_directories = os.environ[env_var].strip().split(':')
+        env_directories = \
+            [os.environ[env_var]] if ":" not in os.environ[env_var] \
+            else os.environ[env_var].strip().strip(':').split(':')
         # Check if the directories are valid
         for directory in env_directories:
             if not os.path.isdir(directory):
-                raise FileNotFoundError(f"Directory {directory} not found")
+                raise FileNotFoundError(
+                    f"Directory {directory} not found. env_var: {env_var}")
             input_file_path = os.path.join(directory, input_file)
             if os.path.exists(input_file_path):
                 return input_file_path
