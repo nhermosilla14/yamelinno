@@ -46,12 +46,8 @@ def get_startup_configurations(argv=None) -> argparse.Namespace:
 
     # Check if the schema file is specified
     if not args.schema_file:
-        # If not specified, the schema file should be in the same directory as the input file
-        args.schema_file = os.path.join(os.path.dirname(args.input_file), "schema.yml")
-
-    # Check if the schema file exists
-    if not os.path.exists(args.schema_file):
-        parser.error(f"Schema file '{args.schema_file}' not found")
+        # If not specified, assume the base-schema file from this project
+        args.schema_file = "base-schema.yml"
 
     return args
 

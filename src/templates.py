@@ -9,6 +9,8 @@ import os
 
 import yaml
 
+from src.validation import search_input_file
+
 def search_template(template, directories=None):
     """
     Search for a template in a list of directories.
@@ -23,23 +25,7 @@ def search_template(template, directories=None):
     """
     # First check if the template is a full path or relative
     # to the current directory
-    if os.path.exists(template):
-        return template
-    # If the YAMELINNO_TEMPLATES environment variable is set,
-    # verify if its a list of directories separated by a colon
-    if 'YAMELINNO_TEMPLATES' in os.environ:
-        env_directories = os.environ['YAMELINNO_TEMPLATES'].split(':')
-        # Add the provided directories to the list
-        if directories is not None:
-            env_directories.extend(directories)
-        # Check if the directories are valid
-        for directory in env_directories:
-            if not os.path.isdir(directory):
-                raise FileNotFoundError(f"Directory {directory} not found")
-            template_path = os.path.join(directory, template)
-            if os.path.exists(template_path):
-                return template_path
-    raise FileNotFoundError(f"Template {template} not found")
+    return search_input_file(template, 'template', directories)
 
 
 def load_config(config_file, as_template=False, input_args=None) -> dict:
@@ -79,7 +65,13 @@ def load_config(config_file, as_template=False, input_args=None) -> dict:
                 raise KeyError("Template path not specified")
             template_args = t.get('inputs', None)
             overwrite_destination = t.get('overwrite', False)
-            template = load_template(t['path'], template_args)
+            # Search for the template file, including the
+            # location where the config file is
+            template_path = search_template(
+                t['path'],
+                [os.path.dirname(os.path.abspath(config_file))]
+            )
+            template = load_template(template_path, template_args)
             merged_config = deep_merge_dicts(template, merged_config, overwrite_destination)
         config.pop('templates', None)
         merged_config = deep_merge_dicts(config, merged_config)

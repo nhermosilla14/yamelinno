@@ -4,6 +4,7 @@ config file, such as the keys in a dictionary, and the structure of the
 config file. Some validation is done by checking against the provided schema,
 and by checking for required fields.
 """
+import os
 
 SUPPORTED_TYPES = (str, int, float, bool, dict, list)
 
@@ -33,6 +34,57 @@ def get_python_type(value: str) -> type:
     if value.lower() in  ['list', 'array', 'sequence', 'tuple', 'collection']:
         return list
     raise ValueError("Invalid type")
+
+def search_input_file(input_file: str, kind='schema', directories=None) -> str:
+    """
+    Search for an input file in several locations.
+    The precedence is as follows:
+    1. The specified input file path/name, if it exists (absolute or relative).
+    2. The directories specified in the YAMELINNO_<kind> environment variable. I.e.
+         YAMELINNO_SCHEMAS for schemas, YAMELINNO_TEMPLATES for templates, etc.
+    3. The directories specified in the directories argument. This is useful for
+         specifying directories in the command line or to make sure the search
+         includes the directory where another file which sourced this input file
+         is located.
+
+    Args:
+        input_file (str): The path to the input file.
+        kind (str): The kind of file being searched for. Default is 'schema'.
+        directories (list): A list of directories to search in. Default is None.
+
+    Returns:
+        str: The path to the input file.
+
+    Raises:
+        FileNotFoundError: If the input file is not found.
+    """
+    searched_locations = []
+    env_var = f"YAMELINNO_{kind.upper() + 'S'}"
+    if os.path.exists(input_file):
+        return input_file
+    searched_locations.append(input_file)
+    # If the YAMELINNO_<kind> environment variable is set,
+    # verify if its a list of directories separated by a colon
+    if env_var in os.environ:
+        env_directories = os.environ[env_var].strip().split(':')
+        # Check if the directories are valid
+        for directory in env_directories:
+            if not os.path.isdir(directory):
+                raise FileNotFoundError(f"Directory {directory} not found")
+            input_file_path = os.path.join(directory, input_file)
+            if os.path.exists(input_file_path):
+                return input_file_path
+            searched_locations.append(input_file_path)
+    # If the directories argument is provided, search in them
+    if directories is None:
+        directories = []
+    for directory in directories:
+        input_file_path = os.path.join(directory, input_file)
+        if os.path.isdir(directory) and os.path.exists(input_file_path):
+            return input_file_path
+        searched_locations.append(input_file_path)
+    raise FileNotFoundError(
+        f"Input {kind} {input_file} not found. Searched in: {searched_locations}")
 
 
 def validate_dict_keys(dict_value) -> None:

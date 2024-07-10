@@ -2,8 +2,25 @@
 This module is used to render the config file, from yaml to the
 iss format. The iss format is expressed in yaml.
 """
-
 import yaml
+
+from src.validation import search_input_file
+
+def search_schema(schema_file) -> str:
+    """
+    Search for a schema file in the current directory or in the directories
+    specified by the YAMELINNO_SCHEMAS environment variable.
+
+    Args:
+        schema_file (str): The path to the schema file.
+
+    Returns:
+        str: The path to the schema file.
+
+    Raises:
+        FileNotFoundError: If the schema file is not found.
+    """
+    return search_input_file(schema_file, 'schema')
 
 def load_schema(schema_file) -> dict:
     """
@@ -19,6 +36,7 @@ def load_schema(schema_file) -> dict:
         FileNotFoundError: If the schema file does not exist.
         yaml.YAMLError: If there is an error parsing the schema file.
     """
+    schema_file = search_schema(schema_file)
     with open(schema_file, 'r', encoding='utf-8') as file:
         schema = yaml.load(file, Loader=yaml.FullLoader)
         return schema
