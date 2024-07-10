@@ -174,7 +174,7 @@ class TestSearchTemplate(unittest.TestCase):
         template_file = 'leaf_template.yaml'
         with open(template_file, 'w', encoding='utf-8') as file:
             file.write('key0: value1\nkey1: value2\nkey2: value3\n')
-        
+
         expected_path = template_file
         actual_path = search_template(template_file)
         # Clean up
@@ -187,7 +187,7 @@ class TestSearchTemplate(unittest.TestCase):
         os.mkdir('tmp')
         with open(f'tmp/{template_file}', 'w', encoding='utf-8') as file:
             file.write('key0: value1\nkey1: value2\nkey2: value3\n')
-        
+
         expected_path = f'tmp/{template_file}'
         actual_path = search_template(template_file, ['tmp'])
         # Clean up
@@ -201,7 +201,7 @@ class TestSearchTemplate(unittest.TestCase):
         os.mkdir('tmp')
         with open(f'tmp/{template_file}', 'w', encoding='utf-8') as file:
             file.write('key0: value1\nkey1: value2\nkey2: value3\n')
-        
+
         os.environ['YAMELINNO_TEMPLATES'] = 'tmp'
         expected_path = f'tmp/{template_file}'
         actual_path = search_template(template_file)

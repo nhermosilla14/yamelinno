@@ -4,6 +4,7 @@ to generate the initial yaml file. The templates are
 merged in order, and the values from the last template
 are used if there are conflicts.
 """
+from typing import Dict
 import os
 
 import yaml
@@ -69,7 +70,7 @@ def load_config(config_file, as_template=False, input_args=None) -> dict:
             # with no referenced templates
             return config
         # There are templates to parse
-        merged_config = {}
+        merged_config: Dict[str, str] = {}
         for t in config['templates']:
             # Compatibility with old templates
             if isinstance(t, str):
