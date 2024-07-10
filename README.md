@@ -31,7 +31,7 @@ yamelinno.py [options] <input_yml_file>
 
 Options:
   -o, --output <output_file>  Output file. If not specified, the output will be printed to stdout.
-  -s, --schema <schema_file>  Schema file. If not specified, the schema will be read from "schema.yml", which must be in the same directory as the input file.
+  -s, --schema <schema_file>  Schema file. If not specified, the schema will be read from "base-schema.yml", which will be searched in any of the available schemas directories.
   -v, --version               Display the version of the tool.
   -h, --help                  Display this help message.
 ```
@@ -108,7 +108,7 @@ Source: "src/main.js"; DestDir: "{app}"; Flags: ignoreversion
 ```
 
 ## Explanation
-The tool reads the input file and validates it against the schema. If the input file is valid, it renders the iss file. The schema is used to validate the input file and to provide hints to the user. More on that later.
+The tool reads the input file and searches recursively for the referenced templates. It then merges them into a single yaml file, validates it against the schema and, if the file is valid, proceeds to render the iss file. The schema is used to validate the input file and to provide hints to the user. More on that later.
 
 # Templates
 Templates are just pre-filled yaml files, which can be included in the main yaml file (or in other templates). They are resolved recursively, so a template can include other templates, which can include other templates, and so on. Here is an example:
@@ -149,6 +149,7 @@ The are two possible ways to include a template in the main yaml file:
 1. By appending the path to a template to the list of `templates`. This is what is shown in the example above.
 2. By using the extended syntax, which allows you to specify the path to the template file and the inputs to be used in the template. This is useful when you want to reuse a template with different values.
 
+Here is an example of the extended syntax:
 ```yaml
 # template.yml
 # A template to include a file in the installation directory.
@@ -158,7 +159,7 @@ files:
     flags:
       - ignoreversion
 ```
-
+The `!sourceFile` key will be replaced by the value of the `sourceFile` key in the input file, as shown below.
 
 ```yaml
 templates:
@@ -174,7 +175,7 @@ templates:
       # lists will be appended.
     overwrite: false
 ```
-
+As a result, you will get:
 ```iss
 [Files]
 Source: "C:\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
@@ -187,8 +188,38 @@ Some more things to add:
 - You can add the same template several times.
 - The order in which the templates are included is important. The templates are resolved in the order they are included, so the last template will (most likely) overwrite the values in the previous templates.
 - Templates are not validated against the schema, so you can include any yaml file as a template. This is useful when you want to include a snippet of code that is not part of the schema. The end result is validated against the schema, though.
+- As the input values are resolved by simple string replacement, some issues may arise if the input values contain special characters or if an input value is fully contained in another input value. This is a known issue and will be addressed in future versions. A simple example of this is shown below:
+```yaml
+# template.yml
+files:
+  - source: '!sourceFile'
+    destDir: '{app}\!source'
+    flags:
+      - ignoreversion
+```
+You would expect to use it as follows:
+```yaml
+templates:
+  - path: "template.yml"
+    inputs:
+      - source: 'myDir'
+      - sourceFile: 'C:\LICENSE'
+```
+But the result will be:
+```iss
+[Files]
+Source: "myDirFile"; DestDir: "{app}\myDir"; Flags: ignoreversion
+```
+This is because the `sourceFile` value is fully contained in the `source` value, and in this case, the replacement is done in the order the values are resolved. This is a known issue and will be addressed in future versions. For now, you can avoid this by using different names for the input values.
 
-# Schema
+## Path resolution
+The path to the template file is resolved in the following way:
+1. The path is checked as is. If the file exists, it is included, no matter if it's an absolute or relative path.
+2. If the "YAMELINNO_TEMPLATES" environment variable is set, the path is checked against the directories in the variable. Many directories can be specified, separated by a colon. If the file exists in any of the directories, it is included. If an invalid directory is specified, it will raise an error.
+3. If none of the above methods work, the tool will try to find the file in the same directory as file which referenced it in the `templates` key. This allows you to include templates that are in the same directory as the main yaml file, without having to specify the full path for any of them. You can also store all your templates in a single directory and reference them by filename only.
+4. If none of the above methods work, the tool will raise an error.
+
+# Schemas
 The schema is a yaml file that defines the structure of the input yaml file. It is used to validate the input file and to provide hints to the user. The schema is also a yaml file, so you can modify it to add missing keys or entries without having to modify the tool. The attributes and structure of the schema are pretty much self-explanatory, but here is a brief explanation of the keys:
 
 - `renderedName`: The name of the key in the rendered iss file.
@@ -224,9 +255,15 @@ setup:
         required: false
 ```
 
-A base schema is provided with the tool, so you can use it as a starting point to define your own schema. The base schema is pretty much the same as the schema above, but with more keys and entries defined. You can find it in the `schemas/base-schema.yml` file.
+A base schema is provided with the tool, so you can use it as a starting point to define your own schema. The base schema is pretty much the same as the schema above, but with more keys and entries defined. You can find it in the `schemas/base-schema.yml` file. If you want to use a different schema, you can specify it with the `-s` or `--schema` option. If you don't specify a schema, the tool will try to find the base schema in any of the available schemas directories.
 
-NOTE: Although the provided schema does follow pretty much the same naming conventions as the InnoSetup directives, it doesn't have to. You can define the keys and entries in the schema in any way you see fit, as long as you follow the structure defined above. As long as you keep the `renderedName` a valid InnoSetup directive, the tool will render it correctly.
+NOTE: Although the provided schema does follow pretty much the same naming conventions as the InnoSetup directives, it doesn't have to be that way. You can define the keys and entries in the schema in any way you see fit, as long as you follow the structure defined above. As long as you keep the `renderedName` a valid InnoSetup directive, the tool will render it correctly.
+
+## Schema resolution
+Just like the templates, the schema is resolved in the following way:
+1. The path is checked as is. If the file exists, it is included, no matter if it's an absolute or relative path.
+2. If the "YAMELINNO_SCHEMAS" environment variable is set, the path is checked against the directories in the variable. Many directories can be specified, separated by a colon. If the file exists in any of the directories, it is included. If an invalid directory is specified, it will raise an error.
+3. Schemas are not referenced in the input file so, if none of the above methods work, the tool will raise an error.
 
 # Roadmap
 - [X] Support for templates that can be resolved at runtime, either by the tool or by the user.
@@ -235,6 +272,37 @@ NOTE: Although the provided schema does follow pretty much the same naming conve
 - [ ] Support for brief syntax, which would allow the user to write the yaml file in a more concise way.
 - [ ] Enable usage as a library, so it can be integrated with other tools.
 - [ ] Port to Rust, because why not?
+
+# Usage
+You can use this tool in many ways, but here are some examples:
+## As a script
+You can run it directly as a python script. Just clone the repository, install the dependencies, and run the script with the desired options. For example:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python yamelinno.py input.yml -o output.iss
+```
+
+## As a container
+You can use the provided container image to run the tool. Just pull the image and run it with the desired options. For example:
+
+```bash
+podman run --rm -v $(pwd):/app ghcr.io/nhermosilla14/yamelinno:latest input.yml -o output.iss
+```
+
+## Building the container
+You can build the container image yourself. Just clone the repository and build using the provided Containerfile. For example:
+
+```bash
+# Using podman is recommended
+podman build -t yamelinno -f Containerfile .
+
+# Or using docker
+docker build -t yamelinno -f Containerfile .
+```
+This will build the container image with the name `yamelinno`. You can then run it as shown above.
 
 # Coding guidelines
 This project follows some coding guidelines to keep the codebase clean and easy to understand. Here are some of them:
