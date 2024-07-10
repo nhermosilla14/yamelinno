@@ -181,6 +181,9 @@ setup:
     onlyBelowVersion:
       renderedName: OnlyBelowVersion
       required: false
+    outputBaseFilename:
+      renderedName: OutputBaseFilename
+      required: false
     outputDir:
       renderedName: OutputDir
       required: false
@@ -649,6 +652,9 @@ uninstallRun:
       required: false
     flags:
       renderedName: Flags
+      required: false
+    tasks:
+      renderedName: Tasks
       required: false
 
 installDelete:
