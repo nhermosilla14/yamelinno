@@ -27,6 +27,7 @@ RUN pyinstaller --onefile --clean --distpath /tmp/yamelino /tmp/yamelinno/yameli
 
 # Now we build the final image
 FROM docker.io/alpine:3.20 as base
+LABEL org.opencontainers.image.description "A tool to generate InnoSetup scripts from YAML files."
 # Set the working directory in the container
 WORKDIR /app
 # Copy the compiled binary from the compiler stage
