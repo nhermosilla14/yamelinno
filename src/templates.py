@@ -75,6 +75,10 @@ def load_config(config_file, as_template=False, input_args=None) -> dict:
             merged_config = deep_merge_dicts(template, merged_config, overwrite_destination)
         config.pop('templates', None)
         merged_config = deep_merge_dicts(config, merged_config)
+        # Fix to move the "code" section to the end
+        if 'code' in merged_config:
+            code = merged_config.pop('code')
+            merged_config['code'] = code
         return merged_config
 
 
