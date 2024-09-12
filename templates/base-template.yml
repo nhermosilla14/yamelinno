@@ -176,12 +176,14 @@ code:
     
       { get the uninstall string of the old app }
       sUnInstallString := GetUninstallString();
-      
-      if Exec(sUnInstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
-        Result := 0
-      else
+      if sUnInstallString <> '' then begin
+        sUnInstallString := RemoveQuotes(sUnInstallString);
+        if Exec(sUnInstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
+          Result := 3
+        else
+          Result := 2;
+      end else
         Result := 1;
-      end 
     end;
 
     { ///////////////////////////////////////////////////////////////////// }
