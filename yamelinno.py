@@ -36,7 +36,7 @@ def get_startup_configurations(argv=None) -> argparse.Namespace:
     parser.add_argument(
         '-v', '--version',
         action='version',
-        version='yamelinno 1.0',
+        version='yamelinno 0.1',
         help='Display the version of the tool.')
     args = parser.parse_args(argv)
 
