@@ -222,9 +222,9 @@ This is because the `sourceFile` value is fully contained in the `source` value,
 
 ## Path resolution
 The path to the template file is resolved in the following way:
-1. The path is checked as is. If the file exists, it is included, no matter if it's an absolute or relative path.
+1. The path is checked as is. If the file exists, it is included, no matter if it's an absolute or relative path (if it is relative, then it's evaluated starting from the current directory).
 2. If the "YAMELINNO_TEMPLATES" environment variable is set, the path is checked against the directories in the variable. Many directories can be specified, separated by a colon. If the file exists in any of the directories, it is included. If an invalid directory is specified, it will raise an error.
-3. If none of the above methods work, the tool will try to find the file in the same directory as file which referenced it in the `templates` key. This allows you to include templates that are in the same directory as the main yaml file, without having to specify the full path for any of them. You can also store all your templates in a single directory and reference them by filename only.
+3. If none of the above methods work, the tool will try to find the file in the same directory as the file which referenced it in the `templates` key. This allows you to include templates that are in the same directory as the main yaml file, without having to specify the full path for any of them. You can also store all your templates in a single directory and reference them by filename only.
 4. If none of the above methods work, the tool will raise an error.
 
 # Schemas
@@ -269,7 +269,7 @@ NOTE: Although the provided schema does follow pretty much the same naming conve
 
 ## Schema resolution
 Just like the templates, the schema is resolved in the following way:
-1. The path is checked as is. If the file exists, it is included, no matter if it's an absolute or relative path.
+1. The path is checked as is. If the file exists, it is included, no matter if it's an absolute or relative path (if it is relative, then it's evaluated starting from the current directory).
 2. If the "YAMELINNO_SCHEMAS" environment variable is set, the path is checked against the directories in the variable. Many directories can be specified, separated by a colon. If the file exists in any of the directories, it is included. If an invalid directory is specified, it will raise an error.
 3. Schemas are not referenced in the input file so, if none of the above methods work, the tool will raise an error.
 
