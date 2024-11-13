@@ -421,6 +421,9 @@ icons:
     flags:
       renderedName: Flags
       required: false
+    afterInstall:
+      renderedName: AfterInstall
+      required: false
 
 ini:
   renderedName: Ini
