@@ -38,6 +38,7 @@ jobs:
           
       # Push the image to GHCR (Image Registry)
       - name: Push To GHCR
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: redhat-actions/push-to-registry@v2
         id: push
         with:
