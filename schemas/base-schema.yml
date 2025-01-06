@@ -684,6 +684,27 @@ uninstallDelete:
       renderedName: Name
       required: true
 
+components:
+  renderedName: Components
+  children: entries
+  # Entry structure
+  entry:
+    name:
+      renderedName: Name
+      required: true
+    description:
+      renderedName: Description
+      required: true
+    types:
+      renderedName: Types
+      required: false
+    extraDiskSpaceRequired:
+      renderedName: ExtraDiskSpaceRequired
+      required: false
+    flags:
+      renderedName: Flags
+      required: false
+
 code:
   renderedName: Code
   children: raw
