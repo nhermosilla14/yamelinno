@@ -367,6 +367,12 @@ files:
     flags:
       renderedName: Flags
       required: false
+    components:
+      renderedName: Components
+      required: false
+    tasks:
+      renderedName: Tasks
+      required: false
 
 dirs:
   renderedName: Dirs
@@ -384,7 +390,13 @@ dirs:
       required: false
     flags:
       renderedName: Flags
-      required: false   
+      required: false
+    components:
+      renderedName: Components
+      required: false
+    tasks:
+      renderedName: Tasks
+      required: false
 
 icons:
   renderedName: Icons
@@ -659,6 +671,9 @@ uninstallRun:
     tasks:
       renderedName: Tasks
       required: false
+    components:
+      renderedName: Components
+      required: false
 
 installDelete:
   renderedName: InstallDelete
@@ -671,6 +686,12 @@ installDelete:
     name:
       renderedName: Name
       required: true
+    components:
+      renderedName: Components
+      required: false
+    tasks:
+      renderedName: Tasks
+      required: false
 
 uninstallDelete:
   renderedName: UninstallDelete
@@ -683,6 +704,12 @@ uninstallDelete:
     name:
       renderedName: Name
       required: true
+    components:
+      renderedName: Components
+      required: false
+    tasks:
+      renderedName: Tasks
+      required: false
 
 components:
   renderedName: Components

@@ -4,26 +4,26 @@ FROM docker.io/alpine:3.20 as compiler
 RUN apk add --no-cache python3 py3-pip
 RUN apk add --no-cache upx binutils gcc
 
+# Install uv
+RUN pip3 install --no-cache-dir --break-system-packages uv
+
 # Create a temporary directory for yamelinno
 RUN mkdir -p /tmp/yamelinno
 # Create an output directory for the compiled binary
 RUN mkdir -p /opt/yamelinno
 # Copy the current directory contents into the container at /tmp/yamelinno
-COPY requirements.txt /tmp/yamelinno/
+COPY pyproject.toml /tmp/yamelinno/
+COPY .python-version /tmp/yamelinno/
+COPY uv.lock /tmp/yamelinno/
 COPY yamelinno.py /tmp/yamelinno/
-COPY requirements.txt /opt/yamelinno/
 COPY ./src /tmp/yamelinno/src
 # Add assets directories to the container at /opt/yamelinno
 COPY ./schemas /opt/yamelinno/schemas
 COPY ./templates /opt/yamelinno/templates
-# Prepare the virtual environment
-RUN python3 -m venv /tmp/yamelinno/venv
-# Can't use source .../bin/activate in Dockerfile
-ENV PATH /tmp/yamelinno/venv/bin/:$PATH
-# Install the dependencies
-RUN python3 -m pip install --no-cache-dir -r /tmp/yamelinno/requirements.txt
-RUN python3 -m pip install --no-cache-dir pyinstaller
-RUN pyinstaller --onefile --clean --distpath /tmp/yamelino /tmp/yamelinno/yamelinno.py
+
+WORKDIR /tmp/yamelinno
+# Build the project with uv
+RUN uv run pyinstaller --onefile --clean --distpath /tmp/yamelino /tmp/yamelinno/yamelinno.py
 
 # Now we build the final image
 FROM docker.io/alpine:3.20 as base
